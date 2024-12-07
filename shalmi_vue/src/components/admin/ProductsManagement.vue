@@ -54,6 +54,71 @@
           <tr>
             <th class="px-4 py-2 text-left">Title</th>
             <th class="px-4 py-2 text-left">Category</th>
+            <th class="px-4 py-2 text-left">Subcategory</th>
+            <th class="px-4 py-2">
+              <div class="grid grid-cols-6 gap-2 text-center">
+                <button 
+                  @click="filterByLabel('is_new_arrival')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-blue-100 text-blue-800': !activeLabels.includes('is_new_arrival'),
+                    'bg-blue-500 text-white': activeLabels.includes('is_new_arrival')
+                  }"
+                >
+                  New
+                </button>
+                <button 
+                  @click="filterByLabel('is_trending')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-purple-100 text-purple-800': !activeLabels.includes('is_trending'),
+                    'bg-purple-500 text-white': activeLabels.includes('is_trending')
+                  }"
+                >
+                  Trending
+                </button>
+                <button 
+                  @click="filterByLabel('is_featured')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-green-100 text-green-800': !activeLabels.includes('is_featured'),
+                    'bg-green-500 text-white': activeLabels.includes('is_featured')
+                  }"
+                >
+                  Featured
+                </button>
+                <button 
+                  @click="filterByLabel('is_wholesale')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-yellow-100 text-yellow-800': !activeLabels.includes('is_wholesale'),
+                    'bg-yellow-500 text-white': activeLabels.includes('is_wholesale')
+                  }"
+                >
+                  Wholesale
+                </button>
+                <button 
+                  @click="filterByLabel('is_discounted')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-red-100 text-red-800': !activeLabels.includes('is_discounted'),
+                    'bg-red-500 text-white': activeLabels.includes('is_discounted')
+                  }"
+                >
+                  Discounted
+                </button>
+                <button 
+                  @click="filterByLabel('is_top_selling')"
+                  :class="{
+                    'px-2 py-1 text-xs rounded transition-colors': true,
+                    'bg-indigo-100 text-indigo-800': !activeLabels.includes('is_top_selling'),
+                    'bg-indigo-500 text-white': activeLabels.includes('is_top_selling')
+                  }"
+                >
+                  Top Selling
+                </button>
+              </div>
+            </th>
             <th class="px-4 py-2 text-left">Price</th>
             <th class="px-4 py-2 text-left">Stock</th>
             <th class="px-4 py-2 text-left">Status</th>
@@ -61,7 +126,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in products" :key="product.id" class="border-b">
+          <tr v-for="product in filteredProducts" :key="product.id" class="border-b">
             <td class="px-4 py-2">
               <div class="flex items-center gap-2">
                 <img 
@@ -73,11 +138,71 @@
                 {{ product.title }}
               </div>
             </td>
+            <td class="px-4 py-2">{{ product.category?.name }}</td>
+            <td class="px-4 py-2">{{ product.subcategory?.name }}</td>
             <td class="px-4 py-2">
-              {{ product.category?.name }}
-              <span v-if="product.subcategory" class="text-gray-500">
-                / {{ product.subcategory.name }}
-              </span>
+              <div class="grid grid-cols-6 gap-2 text-center">
+                <span 
+                  @click="updateProductLabel(product.id, 'is_new_arrival', !product.labels?.is_new_arrival)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_new_arrival,
+                    'text-red-600': !product.labels?.is_new_arrival
+                  }"
+                >
+                  {{ product.labels?.is_new_arrival ? '✓' : '✗' }}
+                </span>
+                <span 
+                  @click="updateProductLabel(product.id, 'is_trending', !product.labels?.is_trending)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_trending,
+                    'text-red-600': !product.labels?.is_trending
+                  }"
+                >
+                  {{ product.labels?.is_trending ? '✓' : '✗' }}
+                </span>
+                <span 
+                  @click="updateProductLabel(product.id, 'is_featured', !product.labels?.is_featured)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_featured,
+                    'text-red-600': !product.labels?.is_featured
+                  }"
+                >
+                  {{ product.labels?.is_featured ? '✓' : '✗' }}
+                </span>
+                <span 
+                  @click="updateProductLabel(product.id, 'is_wholesale', !product.labels?.is_wholesale)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_wholesale,
+                    'text-red-600': !product.labels?.is_wholesale
+                  }"
+                >
+                  {{ product.labels?.is_wholesale ? '✓' : '✗' }}
+                </span>
+                <span 
+                  @click="updateProductLabel(product.id, 'is_discounted', !product.labels?.is_discounted)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_discounted,
+                    'text-red-600': !product.labels?.is_discounted
+                  }"
+                >
+                  {{ product.labels?.is_discounted ? '✓' : '✗' }}
+                </span>
+                <span 
+                  @click="updateProductLabel(product.id, 'is_top_selling', !product.labels?.is_top_selling)"
+                  :class="{
+                    'cursor-pointer hover:opacity-70': true,
+                    'text-green-600': product.labels?.is_top_selling,
+                    'text-red-600': !product.labels?.is_top_selling
+                  }"
+                >
+                  {{ product.labels?.is_top_selling ? '✓' : '✗' }}
+                </span>
+              </div>
             </td>
             <td class="px-4 py-2">${{ product.price }}</td>
             <td class="px-4 py-2">{{ product.stock }}</td>
@@ -253,7 +378,8 @@ export default {
         stock: 0,
         status: 'draft',
         image: null
-      }
+      },
+      activeLabels: []
     }
   },
   methods: {
@@ -271,9 +397,43 @@ export default {
             'Authorization': `Bearer ${token}`
           }
         });
-        this.products = response.data;
+        
+        // Debug logs for products and their labels
+        console.log('All Products Response:', response.data);
+        response.data.forEach(product => {
+          // Fix: Get the first item from labels array if it exists
+          const labelData = product.labels?.[0] || {};
+          console.log(`Product ID ${product.id}:`, {
+            title: product.title,
+            labels: labelData,
+            hasLabels: !!labelData,
+            labelValues: {
+              new_arrival: labelData.is_new_arrival || false,
+              trending: labelData.is_trending || false,
+              featured: labelData.is_featured || false,
+              wholesale: labelData.is_wholesale || false,
+              discounted: labelData.is_discounted || false,
+              top_selling: labelData.is_top_selling || false,
+            }
+          });
+        });
+
+        // Fix: Transform the data to use first labels array item
+        this.products = response.data.map(product => ({
+          ...product,
+          labels: product.labels?.[0] || {
+            is_new_arrival: false,
+            is_trending: false,
+            is_featured: false,
+            is_wholesale: false,
+            is_discounted: false,
+            is_top_selling: false
+          }
+        }));
+
       } catch (error) {
         console.error('Error fetching products:', error);
+        console.error('Error response:', error.response?.data);
       }
     },
 
@@ -428,7 +588,56 @@ export default {
 
     debounceSearch: debounce(function() {
       this.fetchProducts();
-    }, 300)
+    }, 300),
+
+    filterByLabel(label) {
+      console.log('Filtering by label:', label);
+      console.log('Current active labels:', this.activeLabels);
+      const index = this.activeLabels.indexOf(label);
+      if (index === -1) {
+        this.activeLabels.push(label);
+      } else {
+        this.activeLabels.splice(index, 1);
+      }
+      console.log('Updated active labels:', this.activeLabels);
+    },
+
+    async updateProductLabel(productId, label, value) {
+      try {
+        console.log('Updating label:', {
+          productId,
+          label,
+          value
+        });
+
+        const token = localStorage.getItem('access_token');
+        
+        // Create labels object with just the updated label
+        const labelUpdate = {
+          [label]: value
+        };
+
+        console.log('Sending label update:', labelUpdate);
+
+        const response = await axios.patch(
+          `http://localhost:8000/api/products/${productId}/update_labels/`,  // Use update_labels endpoint
+          labelUpdate,  // Send only the updated label
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        
+        console.log('Label update response:', response.data);
+        await this.fetchProducts(); // Refresh the products list
+      } catch (error) {
+        console.error('Error updating product label:', error);
+        console.error('Error response:', error.response?.data);
+        alert(error.response?.data?.detail || 'Failed to update label');
+      }
+    }
   },
   mounted() {
     this.fetchProducts();
@@ -445,6 +654,29 @@ export default {
         }
       }
     }
+  },
+  computed: {
+    filteredProducts() {
+      console.log('Filtering products with labels:', this.activeLabels);
+      if (this.activeLabels.length === 0) {
+        console.log('No active filters, returning all products');
+        return this.products;
+      }
+      
+      const filtered = this.products.filter(product => {
+        console.log(`Checking product ${product.id}:`, {
+          title: product.title,
+          labels: product.labels,
+          matches: this.activeLabels.every(label => product.labels?.[label])
+        });
+        return this.activeLabels.every(label => product.labels?.[label]);
+      });
+      
+      console.log('Filtered products:', filtered);
+      return filtered;
+    }
   }
 }
 </script> 
+
+</rewritten_file>

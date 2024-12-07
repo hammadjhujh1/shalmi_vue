@@ -102,11 +102,11 @@
     <!-- New Arrivals Section -->
     <NewArrivals />
     <!-- Product Sections -->
-    <AllProducts 
-      v-for="title in productSections" 
-      :key="title"
-      :title="title"
-    />
+    <TrendingProducts />
+    <WholesaleProducts />
+    <FeaturedProducts />
+    <DiscountedProducts />
+    <TopSellingProducts />
 
     <!-- Bottom Section -->
     <section class="py-8 bg-gray-50">
@@ -115,23 +115,16 @@
           <div class="border border-primary rounded px-4 py-2">
             <p>SALE BEGINS IN</p>
           </div>
-          <button 
-            @click="showAllProducts = !showAllProducts" 
-            class="px-8 py-2 bg-primary text-white rounded hover:bg-primary/90"
-          >
+          <h2 class="text-xl font-bold text-primary">
             EXPLORE ALL PRODUCTS
-          </button>
+          </h2>
           <div class="border border-primary rounded px-4 py-2">
-            <p>{{ countdown }} hours</p>
+            <p>{{ formattedCountdown }}</p>
           </div>
         </div>
         
         <!-- All Products Section -->
-        <AllProducts v-if="showAllProducts" />
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div v-for="i in 3" :key="i" class="aspect-[4/3] bg-secondary rounded-lg"></div>
-        </div>
+        <AllProducts :products="allProductsList" />
       </div>
     </section>
   </div>
@@ -139,25 +132,47 @@
 
 <script>
 import NewArrivals from './NewArrivals.vue'
+import TrendingProducts from './TrendingProducts.vue'
+import WholesaleProducts from './WholesaleProducts.vue'
+import FeaturedProducts from './FeaturedProducts.vue'
+import DiscountedProducts from './DiscountedProducts.vue'
+import TopSellingProducts from './TopSellingProducts.vue'
 import AllProducts from './AllProducts.vue'
 
 export default {
   components: {
     NewArrivals,
-    AllProducts
+    TrendingProducts,
+    WholesaleProducts,
+    FeaturedProducts,
+    DiscountedProducts,
+    TopSellingProducts,
+    AllProducts,
   },
   data() {
     return {
       user: null,
       dropdownOpen: false,
-      countdown: "00:02:98",
+      countdown: {
+        hours: 2,
+        minutes: 59,
+        seconds: 59
+      },
+      countdownInterval: null,
       productSections: [
         "TOP TRENDING PRODUCTS",
         "TOP WHOLESALE PRODUCTS",
       ],
       showUserInfo: false,
       showAllProducts: false,
+      allProductsList: [],
     };
+  },
+  computed: {
+    formattedCountdown() {
+      const { hours, minutes, seconds } = this.countdown;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
   },
   mounted() {
     const token = localStorage.getItem('access_token')
@@ -170,6 +185,17 @@ export default {
     if (userStr) {
       this.user = JSON.parse(userStr)
     }
+    
+    // Start countdown
+    this.startCountdown();
+    
+    // Fetch products immediately
+    this.fetchAllProducts();
+  },
+  beforeUnmount() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
   },
   methods: {
     toggleDropdown() {
@@ -177,6 +203,47 @@ export default {
     },
     toggleUserInfo() {
       this.showUserInfo = !this.showUserInfo;
+    },
+    startCountdown() {
+      this.countdownInterval = setInterval(() => {
+        if (this.countdown.seconds > 0) {
+          this.countdown.seconds--;
+        } else {
+          if (this.countdown.minutes > 0) {
+            this.countdown.minutes--;
+            this.countdown.seconds = 59;
+          } else {
+            if (this.countdown.hours > 0) {
+              this.countdown.hours--;
+              this.countdown.minutes = 59;
+              this.countdown.seconds = 59;
+            } else {
+              clearInterval(this.countdownInterval);
+              // Handle countdown finished
+            }
+          }
+        }
+      }, 1000);
+    },
+    async fetchAllProducts() {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('http://localhost:8000/api/products/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        this.allProductsList = data;
+      } catch (error) {
+        console.error('Error:', error);
+      }
     },
   },
 };

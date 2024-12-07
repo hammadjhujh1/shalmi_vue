@@ -1,98 +1,132 @@
 <template>
-  <section class="py-8">
-    <div class="container mx-auto px-4">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-primary">{{ title }}</h2>
-        <div class="flex gap-2">
-          <button 
-            @click="sortProducts('default')"
-            class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90"
-          >
-            SORT BY
-          </button>
-          <button 
-            @click="sortProducts('most_sold')"
-            class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90"
-          >
-            MOST SELL
-          </button>
-          <button 
-            @click="sortProducts('price')"
-            class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90"
-          >
-            PRICE
-          </button>
-          <button 
-            @click="sortProducts('newest')"
-            class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90"
-          >
-            NEWLY ADDED
-          </button>
+  <div>
+    <p v-if="!products.length">No products found</p>
+    <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div v-for="product in products" :key="product.id" class="border rounded-lg p-4 flex flex-col">
+        <img 
+          v-if="product.image" 
+          :src="product.image" 
+          :alt="product.title"
+          class="w-32 h-32 object-cover mx-auto mb-2"
+        >
+        <div v-else class="w-32 h-32 bg-gray-200 mx-auto mb-2 flex items-center justify-center">
+          No Image
         </div>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-        <div v-for="product in products" :key="product.id" class="aspect-square bg-primary/20 rounded-lg p-4">
-          <div class="h-32 w-full bg-gray-200 rounded-lg flex items-center justify-center">
-            <img v-if="product.image" :src="product.image" alt="Product Image" class="h-full w-full object-cover rounded-lg" />
-            <span v-else class="text-gray-500">No Image Available</span>
+        <h3 class="font-semibold text-sm">{{ product.title }}</h3>
+        <p class="text-gray-600 text-sm">Price: ${{ product.price }}</p>
+        <p class="text-gray-500 text-sm">Stock: {{ product.stock }}</p>
+        
+        <!-- Add to Cart Controls -->
+        <div class="mt-2 flex flex-col gap-2">
+          <div class="flex items-center justify-center border rounded">
+            <button 
+              @click="decrementQuantity(product)"
+              class="px-2 py-1 hover:bg-gray-100"
+              :disabled="!cartQuantities[product.id]"
+            >
+              -
+            </button>
+            <span class="px-2">{{ cartQuantities[product.id] || 0 }}</span>
+            <button 
+              @click="incrementQuantity(product)"
+              class="px-2 py-1 hover:bg-gray-100"
+              :disabled="(cartQuantities[product.id] || 0) >= product.stock"
+            >
+              +
+            </button>
           </div>
-          <h3 class="mt-2 text-lg font-semibold">{{ product.title }}</h3>
-          <p class="text-sm text-gray-600">{{ product.description }}</p>
-          <p class="mt-1 text-sm" :class="{'text-green-500': product.quantity > 0, 'text-red-500': product.quantity === 0}">
-            {{ product.quantity > 0 ? 'In Stock' : 'Out of Stock' }}
-          </p>
-          <p class="text-sm text-gray-600">Items Sold: {{ product.items_sold }}</p>
-          <p class="mt-2 text-lg font-bold text-primary">${{ product.price }}</p>
+          <button 
+            @click="addToCart(product)"
+            class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full"
+            :disabled="!cartQuantities[product.id]"
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'AllProducts',
   props: {
-    title: {
-      type: String,
-      default: 'ALL PRODUCTS'
+    products: {
+      type: Array,
+      required: true
     }
   },
+  
   data() {
     return {
-      products: [],
-      currentSort: 'default'
+      cartQuantities: {}
     }
   },
-  async mounted() {
-    await this.fetchProducts()
-  },
+
   methods: {
-    async fetchProducts(sortBy = 'default') {
-      try {
-        const response = await fetch(`http://localhost:8000/api/products/?sort=${sortBy}`);
-        const data = await response.json();
-        this.products = data;
-      } catch (error) {
-        console.error('Error fetching products:', error);
+    incrementQuantity(product) {
+      if (!this.cartQuantities[product.id]) {
+        this.$set(this.cartQuantities, product.id, 0);
+      }
+      if (this.cartQuantities[product.id] < product.stock) {
+        this.cartQuantities[product.id]++;
       }
     },
-    async sortProducts(sortBy) {
-      this.currentSort = sortBy;
-      await this.fetchProducts(sortBy);
+
+    decrementQuantity(product) {
+      if (this.cartQuantities[product.id] > 0) {
+        this.cartQuantities[product.id]--;
+      }
+    },
+
+    async addToCart(product) {
+      try {
+        const quantity = this.cartQuantities[product.id];
+        if (!quantity) return;
+
+        const token = localStorage.getItem('access_token');
+        await axios.post('http://localhost:8000/api/cart/add/', {
+          product_id: product.id,
+          quantity: quantity
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Reset quantity after successful addition
+        this.$set(this.cartQuantities, product.id, 0);
+        
+        // Emit event for parent components
+        this.$emit('product-added-to-cart', {
+          product,
+          quantity
+        });
+
+        // Optional: Show success message
+        alert('Product added to cart successfully!');
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        alert('Failed to add product to cart');
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-.text-primary {
-  color: #003366;
-}
 .bg-primary {
   background-color: #003366;
 }
-.bg-secondary {
-  background-color: #8B0000;
+
+.text-primary {
+  color: #003366;
 }
-</style> 
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
