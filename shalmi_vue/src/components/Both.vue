@@ -100,53 +100,13 @@
       </p>
     </div>
     <!-- New Arrivals Section -->
-    <section class="py-8">
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-primary">NEW ARRIVALS</h2>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <div v-for="product in newArrivals" :key="product.id" class="aspect-square bg-primary/20 rounded-lg p-4">
-            <div class="h-32 w-full bg-gray-200 rounded-lg flex items-center justify-center">
-              <img v-if="product.image" :src="product.image" alt="Product Image" class="h-full w-full object-cover rounded-lg" />
-              <span v-else class="text-gray-500">No Image Available</span>
-            </div>
-            <h3 class="mt-2 text-lg font-semibold">{{ product.title }}</h3>
-            <p class="text-sm text-gray-600">{{ product.description }}</p>
-            <p class="mt-1 text-sm" :class="{'text-green-500': product.quantity > 0, 'text-red-500': product.quantity === 0}">
-              {{ product.quantity > 0 ? 'In Stock' : 'Out of Stock' }}
-            </p>
-            <p class="text-sm text-gray-600">Items Sold: {{ product.items_sold }}</p>
-            <p class="mt-2 text-lg font-bold text-primary">${{ product.price }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <NewArrivals />
     <!-- Product Sections -->
-    <section v-for="title in productSections" :key="title" class="py-8">
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-primary">{{ title }}</h2>
-          <div class="flex gap-2">
-            <button class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90">
-              SORT BY
-            </button>
-            <button class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90">
-              MOST SELL
-            </button>
-            <button class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90">
-              PRICE
-            </button>
-            <button class="bg-secondary text-white px-4 py-2 rounded hover:bg-secondary/90">
-              NEWLY ADDED
-            </button>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <div v-for="i in 7" :key="i" class="aspect-square bg-primary/20 rounded-lg"></div>
-        </div>
-      </div>
-    </section>
+    <AllProducts 
+      v-for="title in productSections" 
+      :key="title"
+      :title="title"
+    />
 
     <!-- Bottom Section -->
     <section class="py-8 bg-gray-50">
@@ -155,13 +115,20 @@
           <div class="border border-primary rounded px-4 py-2">
             <p>SALE BEGINS IN</p>
           </div>
-          <button class="px-8 py-2 bg-primary text-white rounded hover:bg-primary/90">
+          <button 
+            @click="showAllProducts = !showAllProducts" 
+            class="px-8 py-2 bg-primary text-white rounded hover:bg-primary/90"
+          >
             EXPLORE ALL PRODUCTS
           </button>
           <div class="border border-primary rounded px-4 py-2">
             <p>{{ countdown }} hours</p>
           </div>
         </div>
+        
+        <!-- All Products Section -->
+        <AllProducts v-if="showAllProducts" />
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div v-for="i in 3" :key="i" class="aspect-[4/3] bg-secondary rounded-lg"></div>
         </div>
@@ -171,19 +138,25 @@
 </template>
 
 <script>
+import NewArrivals from './NewArrivals.vue'
+import AllProducts from './AllProducts.vue'
+
 export default {
+  components: {
+    NewArrivals,
+    AllProducts
+  },
   data() {
     return {
       user: null,
       dropdownOpen: false,
       countdown: "00:02:98",
       productSections: [
-        " SELLING PRODUCTS TOP",
         "TOP TRENDING PRODUCTS",
         "TOP WHOLESALE PRODUCTS",
       ],
       showUserInfo: false,
-      newArrivals: [],
+      showAllProducts: false,
     };
   },
   mounted() {
@@ -197,8 +170,6 @@ export default {
     if (userStr) {
       this.user = JSON.parse(userStr)
     }
-
-    this.fetchNewArrivals();
   },
   methods: {
     toggleDropdown() {
@@ -206,15 +177,6 @@ export default {
     },
     toggleUserInfo() {
       this.showUserInfo = !this.showUserInfo;
-    },
-    async fetchNewArrivals() {
-      try {
-        const response = await fetch('/api/new-arrivals');
-        const data = await response.json();
-        this.newArrivals = data;
-      } catch (error) {
-        console.error('Error fetching new arrivals:', error);
-      }
     },
   },
 };

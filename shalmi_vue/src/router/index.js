@@ -8,6 +8,9 @@ import Both from '../components/Both.vue'
 import Manager from '../components/Manager.vue'
 import Admin from '../components/Admin.vue'
 import Login from '../components/Login.vue'
+import UsersManagement from '../components/admin/UsersManagement.vue'
+import CategoriesManagement from '../components/admin/CategoriesManagement.vue'
+import ProductsManagement from '../components/admin/ProductsManagement.vue' 
 
 Vue.use(VueRouter)
 
@@ -60,6 +63,21 @@ const router = new VueRouter({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/admin/users',
+      name: 'users',
+      component: UsersManagement
+    },  
+    {
+      path: '/admin/categories',
+      name: 'categories',
+      component: CategoriesManagement
+    },
+    {
+      path: '/admin/products',
+      name: 'products',
+      component: ProductsManagement
     }
   ]
 })
