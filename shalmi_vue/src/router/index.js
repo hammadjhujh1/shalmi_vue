@@ -11,6 +11,7 @@ import Login from '../components/Login.vue'
 import UsersManagement from '../components/admin/UsersManagement.vue'
 import CategoriesManagement from '../components/admin/CategoriesManagement.vue'
 import ProductsManagement from '../components/admin/ProductsManagement.vue' 
+import SignUp from '../components/SignUp.vue'
 
 Vue.use(VueRouter)
 
@@ -58,6 +59,11 @@ const router = new VueRouter({
       path: '/admin',
       name: 'admin',
       component: Admin
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUp
     },
     {
       path: '/login',
