@@ -24,8 +24,8 @@
       <p class="mb-2"><strong>Username:</strong> {{ user?.username }}</p>
       <p class="mb-2"><strong>Email:</strong> {{ user?.email }}</p>
       <p class="mb-2"><strong>Role:</strong> {{ user?.role }}</p>
-      <button @click="toggleUserInfo" class="mt-4 bg-primary text-white px-4 py-2 rounded">
-        Close
+      <button @click="logout" class="mt-4 bg-primary text-white px-4 py-2 rounded w-full">
+        Logout
       </button>
     </div>
 
@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -98,6 +100,22 @@ export default {
     },
     navigateTo(route) {
       this.$router.push(`/admin/${route}`);
+    },
+    async logout() {
+      try {
+        const token = localStorage.getItem('access_token');
+        await axios.post('http://localhost:8000/logout/', {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        this.$router.push('/login');
+        alert('Logged out successfully!');
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
     },
   },
 };
