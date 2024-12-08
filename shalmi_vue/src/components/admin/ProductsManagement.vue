@@ -19,7 +19,11 @@
           @change="fetchProducts"
         >
           <option value="">All Categories</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">
+          <option 
+            v-for="category in categories" 
+            :key="category.id" 
+            :value="category.id"
+          >
             {{ category.name }}
           </option>
         </select>
@@ -207,14 +211,20 @@
             <td class="px-4 py-2">${{ product.price }}</td>
             <td class="px-4 py-2">{{ product.stock }}</td>
             <td class="px-4 py-2">
-              <span :class="{
-                'px-2 py-1 rounded text-sm': true,
-                'bg-yellow-100 text-yellow-800': product.status === 'draft',
-                'bg-green-100 text-green-800': product.status === 'published',
-                'bg-gray-100 text-gray-800': product.status === 'archived'
-              }">
-                {{ product.status }}
-              </span>
+              <select 
+                v-model="product.status"
+                @change="updateProductStatus(product.id, product.status)"
+                :class="{
+                  'px-2 py-1 rounded text-sm': true,
+                  'bg-yellow-100 text-yellow-800': product.status === 'draft',
+                  'bg-green-100 text-green-800': product.status === 'published',
+                  'bg-gray-100 text-gray-800': product.status === 'archived'
+                }"
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
             </td>
             <td class="px-4 py-2">
               <button 
@@ -314,14 +324,6 @@
               </select>
             </div>
             <div class="col-span-2">
-              <label class="block mb-1">Description</label>
-              <textarea 
-                v-model="productForm.description"
-                class="w-full px-3 py-2 border rounded"
-                rows="3"
-              ></textarea>
-            </div>
-            <div class="col-span-2">
               <label class="block mb-1">Image</label>
               <input 
                 type="file"
@@ -371,7 +373,6 @@ export default {
       },
       productForm: {
         title: '',
-        description: '',
         category: null,
         subcategory: null,
         price: 0,
@@ -386,39 +387,37 @@ export default {
     async fetchProducts() {
       try {
         const token = localStorage.getItem('access_token');
-        const params = {
-          category: this.filters.category,
-          status: this.filters.status,
-          search: this.filters.search
-        };
+        
+        // Create an object with the filters
+        const params = new URLSearchParams();
+        
+        if (this.filters.category) {
+          params.append('category_id', this.filters.category);
+        }
+        if (this.filters.status) {
+          params.append('status', this.filters.status);
+        }
+        if (this.filters.search) {
+          params.append('search', this.filters.search.trim());
+        }
+        if (this.filters.minPrice) {
+          params.append('min_price', this.filters.minPrice);
+        }
+        if (this.filters.maxPrice) {
+          params.append('max_price', this.filters.maxPrice);
+        }
+
+        console.log('Sending filters to API:', Object.fromEntries(params));
+
         const response = await axios.get('http://localhost:8000/api/products/', { 
-          params,
+          params: params,
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         
-        // Debug logs for products and their labels
-        console.log('All Products Response:', response.data);
-        response.data.forEach(product => {
-          // Fix: Get the first item from labels array if it exists
-          const labelData = product.labels?.[0] || {};
-          console.log(`Product ID ${product.id}:`, {
-            title: product.title,
-            labels: labelData,
-            hasLabels: !!labelData,
-            labelValues: {
-              new_arrival: labelData.is_new_arrival || false,
-              trending: labelData.is_trending || false,
-              featured: labelData.is_featured || false,
-              wholesale: labelData.is_wholesale || false,
-              discounted: labelData.is_discounted || false,
-              top_selling: labelData.is_top_selling || false,
-            }
-          });
-        });
-
-        // Fix: Transform the data to use first labels array item
+        console.log('API Response:', response.data);
+        
         this.products = response.data.map(product => ({
           ...product,
           labels: product.labels?.[0] || {
@@ -493,57 +492,57 @@ export default {
     async handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        const token = localStorage.getItem('access_token');
-        const formData = new FormData();
-        formData.append('image', file);
-        try {
-          const response = await axios.post('http://localhost:8000/api/upload/', formData, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          this.productForm.image = response.data.url;
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          alert(error.response?.data?.detail || 'Failed to upload image');
-        }
+        // Store the file directly instead of uploading it separately
+        this.productForm.image = file;
       }
     },
 
     async saveProduct() {
       try {
         const token = localStorage.getItem('access_token');
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        };
+        const formData = new FormData();
+        
+        // Append all product data to FormData
+        formData.append('title', this.productForm.title);
+        formData.append('category', this.productForm.category);
+        if (this.productForm.subcategory) {
+          formData.append('subcategory', this.productForm.subcategory);
+        }
+        formData.append('price', this.productForm.price);
+        formData.append('stock', this.productForm.stock);
+        formData.append('status', this.productForm.status);
+        
+        // Only append image if it exists and is a new file
+        if (this.productForm.image && this.productForm.image instanceof File) {
+          formData.append('image', this.productForm.image);
+        }
 
-        // Format the data following Django REST Framework conventions
-        const productData = {
-          title: this.productForm.title,
-          description: this.productForm.description,
-          category: parseInt(this.productForm.category),      // Using 'category' not 'category_id'
-          subcategory: this.productForm.subcategory ? parseInt(this.productForm.subcategory) : null,  // Using 'subcategory' not 'subcategory_id'
-          price: parseFloat(this.productForm.price),
-          stock: parseInt(this.productForm.stock),
-          status: this.productForm.status,
-          image: this.productForm.image
-        };
-
-        console.log('Product data being sent:', productData);
+        console.log('FormData being sent:', Object.fromEntries(formData));
 
         if (this.editingProduct) {
           await axios.put(
             `http://localhost:8000/api/products/${this.editingProduct.id}/`, 
-            productData,
-            config
+            formData,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                // Don't set Content-Type - let axios set it automatically for FormData
+              }
+            }
           );
         } else {
-          await axios.post('http://localhost:8000/api/products/', productData, config);
+          await axios.post(
+            'http://localhost:8000/api/products/', 
+            formData,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                // Don't set Content-Type - let axios set it automatically for FormData
+              }
+            }
+          );
         }
+        
         await this.fetchProducts();
         this.showProductModal = false;
         this.resetForm();
@@ -575,9 +574,8 @@ export default {
     resetForm() {
       this.productForm = {
         title: '',
-        description: '',
-        category: null,        // Using 'category' not 'category_id'
-        subcategory: null,     // Using 'subcategory' not 'subcategory_id'
+        category: null,        
+        subcategory: null,     
         price: 0,
         stock: 0,
         status: 'draft',
@@ -587,8 +585,9 @@ export default {
     },
 
     debounceSearch: debounce(function() {
+      console.log('Debounced search triggered with:', this.filters.search); // Debug log
       this.fetchProducts();
-    }, 300),
+    }, 300), // Reduced debounce time for testing
 
     filterByLabel(label) {
       console.log('Filtering by label:', label);
@@ -636,6 +635,27 @@ export default {
         console.error('Error updating product label:', error);
         console.error('Error response:', error.response?.data);
         alert(error.response?.data?.detail || 'Failed to update label');
+      }
+    },
+
+    async updateProductStatus(productId, newStatus) {
+      try {
+        const token = localStorage.getItem('access_token');
+        await axios.patch(
+          `http://localhost:8000/api/products/${productId}/`,
+          { status: newStatus },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      } catch (error) {
+        console.error('Error updating product status:', error);
+        alert(error.response?.data?.detail || 'Failed to update status');
+        // Revert the status change in the UI if the API call fails
+        await this.fetchProducts();
       }
     }
   },

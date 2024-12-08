@@ -70,6 +70,17 @@
               </span>
               <span v-else>Log In</span>
             </button>
+            
+            <!-- Add divider and sign up button -->
+            <div class="mt-4 text-center">
+              <p class="text-sm text-gray-600">Don't have an account?</p>
+              <router-link 
+                to="/signup" 
+                class="mt-2 w-full inline-block bg-white text-secondary border-2 border-secondary py-3 rounded-lg hover:bg-secondary hover:text-white transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50"
+              >
+                Sign Up
+              </router-link>
+            </div>
           </div>
         </div>
       </main>
@@ -163,7 +174,7 @@ export default {
         spb: '/single-product-buyer/',
         wsb: '/wholesale-buyer/',
         slr: '/seller/',
-        both: '/both/',
+        eu: '/both/',
         mgr: '/manager/',
         adm: '/admin/',
       };

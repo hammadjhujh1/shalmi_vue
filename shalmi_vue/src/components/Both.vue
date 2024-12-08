@@ -7,19 +7,42 @@
           <div class="flex items-center gap-4 flex-1">
             <h1 class="text-2xl font-bold text-primary">SHALMI ONLINE</h1>
             <div class="relative">
-              <button
-                @click="toggleDropdown"
-                class="bg-primary text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-primary/90"
-              >
-                All Categories
-                <span>&#9660;</span>
-              </button>
-              <div v-if="dropdownOpen" class="absolute bg-white text-primary border mt-2 rounded shadow">
-                <ul>
-                  <li class="px-4 py-2 hover:bg-gray-100">Electronics</li>
-                  <li class="px-4 py-2 hover:bg-gray-100">Clothing</li>
-                  <li class="px-4 py-2 hover:bg-gray-100">Home & Garden</li>
-                </ul>
+              <div class="relative group">
+                <button
+                  @click="toggleDropdown"
+                  class="bg-primary text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-primary/90"
+                >
+                  All Categories
+                  <span>&#9660;</span>
+                </button>
+                <div v-if="dropdownOpen" 
+                     class="absolute z-50 bg-white text-primary border mt-2 rounded shadow-lg w-64">
+                  <ul class="py-1">
+                    <li v-for="category in categories" 
+                        :key="category.id" 
+                        class="relative group"
+                    >
+                      <div class="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer">
+                        {{ category.name }}
+                        <span v-if="category.subcategories?.length">&#9654;</span>
+                      </div>
+                      <!-- Right-side subcategories dropdown -->
+                      <div v-if="category.subcategories?.length" 
+                           class="absolute left-full top-0 bg-white border rounded shadow-lg w-64 
+                                  hidden group-hover:block"
+                      >
+                        <ul class="py-1">
+                          <li v-for="subcategory in category.subcategories" 
+                              :key="subcategory.id" 
+                              class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            {{ subcategory.name }}
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="flex-1 max-w-xl relative">
@@ -72,11 +95,32 @@
           <div class="col-span-1 bg-primary/20 p-4 rounded-lg">
             <h2 class="text-xl font-semibold mb-4">TOP Categories</h2>
             <ul class="space-y-2">
-              <li>Electronics</li>
-              <li>Clothing</li>
-              <li>Home & Garden</li>
-              <li>Sports</li>
-              <li>Beauty</li>
+              <li v-for="category in recentCategories" 
+                  :key="category.id"
+                  class="relative hover:bg-primary/30 p-2 rounded cursor-pointer group"
+              >
+                <div class="flex items-center justify-between">
+                  {{ category.name }}
+                  <span v-if="category.subcategories?.length" 
+                        class="transform transition-transform duration-200">
+                    &#9654;
+                  </span>
+                </div>
+                <!-- Left-side subcategories dropdown -->
+                <div v-if="category.subcategories?.length"
+                     class="absolute top-0 right-[102%] bg-white text-primary border rounded shadow-lg w-64 
+                            hidden group-hover:block"
+                >
+                  <ul class="py-1">
+                    <li v-for="subcategory in category.subcategories"
+                        :key="subcategory.id"
+                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {{ subcategory.name }}
+                    </li>
+                  </ul>
+                </div>
+              </li>
             </ul>
           </div>
           <div class="col-span-3">
@@ -138,6 +182,7 @@ import FeaturedProducts from './FeaturedProducts.vue'
 import DiscountedProducts from './DiscountedProducts.vue'
 import TopSellingProducts from './TopSellingProducts.vue'
 import AllProducts from './AllProducts.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -166,6 +211,8 @@ export default {
       showUserInfo: false,
       showAllProducts: false,
       allProductsList: [],
+      categories: [],
+      recentCategories: [],
     };
   },
   computed: {
@@ -191,6 +238,7 @@ export default {
     
     // Fetch products immediately
     this.fetchAllProducts();
+    this.fetchCategories();
   },
   beforeUnmount() {
     if (this.countdownInterval) {
@@ -245,21 +293,70 @@ export default {
         console.error('Error:', error);
       }
     },
+    async fetchCategories() {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get('http://localhost:8000/api/categories/', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        // Filter active categories and subcategories
+        const activeCategories = response.data
+          .filter(category => category.is_active)
+          .map(category => ({
+            ...category,
+            subcategories: category.subcategories?.filter(sub => sub.is_active) || []
+          }));
+
+        this.categories = activeCategories;
+        
+        // Sort categories by created_at date and take top 10
+        this.recentCategories = [...activeCategories]
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 10);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.text-primary {
-  color: #003366;
+/* Basic styles */
+.text-primary { color: #003366; }
+.bg-primary { background-color: #003366; }
+.bg-secondary { background-color: #8B0000; }
+.border-primary { border-color: #003366; }
+
+/* Hover mechanics */
+.group {
+  position: relative;
 }
-.bg-primary {
-  background-color: #003366;
+
+.group:hover > div > span {
+  transform: rotate(90deg);
 }
-.bg-secondary {
-  background-color: #8B0000;
+
+/* Ensure proper stacking */
+.relative {
+  position: relative;
+  z-index: 10;
 }
-.border-primary {
-  border-color: #003366;
+
+.relative:hover {
+  z-index: 20;
+}
+
+/* Ensure dropdowns appear above other content */
+.group > div[class*="absolute"] {
+  z-index: 30;
+}
+
+/* Add gap between category and subcategory dropdown */
+.group > div[class*="absolute"] {
+  margin: 0 4px;
 }
 </style>

@@ -40,8 +40,13 @@
               <i :class="expandedCategories.has(category.id) ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
             </button>
             <div>
-              <h3 class="text-xl font-semibold">{{ category.name }}</h3>
-              <p class="text-gray-600">{{ category.description }}</p>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-semibold">{{ category.name }}</h3>
+                <span :class="category.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
+                      class="px-2 py-1 rounded-full text-xs">
+                  {{ category.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
             </div>
           </div>
           <div class="flex gap-2">
@@ -75,9 +80,12 @@
             <div v-for="subcategory in category.subcategories" :key="subcategory.id"
               class="flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
             >
-              <div>
+              <div class="flex items-center gap-2">
                 <span class="font-medium">{{ subcategory.name }}</span>
-                <p class="text-sm text-gray-600">{{ subcategory.description }}</p>
+                <span :class="subcategory.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
+                      class="px-2 py-1 rounded-full text-xs">
+                  {{ subcategory.is_active ? 'Active' : 'Inactive' }}
+                </span>
               </div>
               <div class="flex gap-2">
                 <button 
@@ -116,13 +124,15 @@
                 required
               >
             </div>
-            <div>
-              <label class="block mb-1">Description</label>
-              <textarea 
-                v-model="form.description"
-                class="w-full px-3 py-2 border rounded"
-                rows="3"
-              ></textarea>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-2">
+                <input 
+                  type="checkbox"
+                  v-model="form.is_active"
+                  class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
+                >
+                <span>Active</span>
+              </label>
             </div>
             <div v-if="modalType === 'subcategory'">
               <label class="block mb-1">Parent Category</label>
@@ -172,8 +182,8 @@ export default {
       editingItem: null,
       form: {
         name: '',
-        description: '',
-        category_id: null
+        category_id: null,
+        is_active: true,
       },
       expandedCategories: new Set(), // Track which categories are expanded
     }
@@ -220,7 +230,7 @@ export default {
       this.editingItem = category;
       this.form = {
         name: category.name,
-        description: category.description
+        is_active: category.is_active
       };
       this.showAddModal = true;
     },
@@ -229,7 +239,6 @@ export default {
       this.editingItem = null;
       this.form = {
         name: '',
-        description: '',
         category_id: category.id
       };
       this.showAddModal = true;
@@ -239,8 +248,8 @@ export default {
       this.editingItem = subcategory;
       this.form = {
         name: subcategory.name,
-        description: subcategory.description,
-        category_id: category.id
+        category_id: category.id,
+        is_active: subcategory.is_active
       };
       this.showAddModal = true;
     },
@@ -274,7 +283,6 @@ export default {
           // Ensure subcategory data is properly formatted
           const subcategoryData = {
             name: this.form.name,
-            description: this.form.description,
             category: parseInt(this.form.category_id) // Changed from category_id to category
           };
           
@@ -345,8 +353,8 @@ export default {
     resetForm() {
       this.form = {
         name: '',
-        description: '',
-        category_id: null
+        category_id: null,
+        is_active: true,
       };
       this.editingItem = null;
     },
