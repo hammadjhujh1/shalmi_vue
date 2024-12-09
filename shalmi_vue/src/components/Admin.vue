@@ -67,6 +67,30 @@
             Manage Products
           </button>
         </div>
+
+        <!-- Orders Management Card -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">Orders Management</h2>
+          <p class="text-gray-600 mb-4">Track and manage customer orders and their status</p>
+          <button 
+            @click="navigateTo('orders')"
+            class="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+          >
+            Manage Orders
+          </button>
+        </div>
+
+        <!-- Track Orders Card -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">Track Orders</h2>
+          <p class="text-gray-600 mb-4">Track shipments and delivery status</p>
+          <button 
+            @click="navigateTo('track-order')"
+            class="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+          >
+            Track Orders
+          </button>
+        </div>
       </div>
     </div>
   </div>

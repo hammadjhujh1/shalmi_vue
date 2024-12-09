@@ -3,32 +3,6 @@
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-primary">{{ title }}</h2>
-        <div class="flex gap-2">
-          <button 
-            @click="sortProducts('default')"
-            class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-          >
-            SORT BY
-          </button>
-          <button 
-            @click="sortProducts('most_sold')"
-            class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-          >
-            MOST SELL
-          </button>
-          <button 
-            @click="sortProducts('price')"
-            class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-          >
-            PRICE
-          </button>
-          <button 
-            @click="sortProducts('newest')"
-            class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-          >
-            NEWLY ADDED
-          </button>
-        </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div v-for="product in products" :key="product.id" class="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
@@ -89,7 +63,6 @@ export default {
   data() {
     return {
       products: [],
-      currentSort: 'default',
       cartQuantities: {}
     }
   },
@@ -97,10 +70,10 @@ export default {
     await this.fetchProducts();
   },
   methods: {
-    async fetchProducts(sortBy = 'default') {
+    async fetchProducts() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get(`http://localhost:8000/api/${this.endpoint}/?sort=${sortBy}`, {
+        const response = await axios.get(`http://localhost:8000/api/${this.endpoint}/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -109,10 +82,6 @@ export default {
       } catch (error) {
         console.error(`Error fetching ${this.title}:`, error);
       }
-    },
-    async sortProducts(sortBy) {
-      this.currentSort = sortBy;
-      await this.fetchProducts(sortBy);
     },
     incrementQuantity(product) {
       if (!this.cartQuantities[product.id]) {

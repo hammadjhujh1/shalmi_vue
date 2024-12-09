@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white">
     <!-- Header -->
-    <header class="border-b">
+    <header class="border-b border-gray-200 shadow-sm">
       <div class="container mx-auto px-4 py-3">
         <div class="flex items-center justify-between gap-4">
           <div class="flex items-center gap-4 flex-1">
@@ -58,8 +58,17 @@
           </div>
           <div class="flex items-center gap-4">
             <button class="text-primary hover:underline">LOGIN/REGISTER</button>
-            <button class="bg-white border-primary border rounded-full p-2">
-               🛒
+            <button 
+              class="bg-white border-primary border rounded-full p-2 relative"
+              @click="$router.push('/checkout')"
+            >
+              🛒
+              <span 
+                v-if="cartItemCount" 
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+              >
+                {{ cartItemCount }}
+              </span>
             </button>
             <button 
               class="bg-white border-primary border rounded-full p-2"
@@ -89,7 +98,7 @@
     </div>
 
     <!-- Featured Products -->
-    <section class="bg-primary text-white py-6">
+    <section class="bg-primary text-white py-6 border-y border-primary-dark">
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-4 gap-4">
           <div class="col-span-1 bg-primary/20 p-4 rounded-lg">
@@ -138,22 +147,34 @@
     </section>
 
     <!-- Marketing Banner -->
-    <div class="bg-secondary text-white py-4 text-center">
+    <div class="bg-secondary text-white py-4 text-center border-b border-secondary-dark">
       <p class="text-xl font-semibold">
         The Pakistan's First and Biggest Online WholeSale Market. Come Join Us
       </p>
     </div>
     <!-- New Arrivals Section -->
-    <NewArrivals />
+    <div class="border-b border-gray-200">
+      <NewArrivals />
+    </div>
     <!-- Product Sections -->
-    <TrendingProducts />
-    <WholesaleProducts />
-    <FeaturedProducts />
-    <DiscountedProducts />
-    <TopSellingProducts />
+    <div class="border-b border-gray-200">
+      <TrendingProducts />
+    </div>
+    <div class="border-b border-gray-200">
+      <WholesaleProducts />
+    </div>
+    <div class="border-b border-gray-200">
+      <FeaturedProducts />
+    </div>
+    <div class="border-b border-gray-200">
+      <DiscountedProducts />
+    </div>
+    <div class="border-b border-gray-200">
+      <TopSellingProducts />
+    </div>
 
     <!-- Bottom Section -->
-    <section class="py-8 bg-gray-50">
+    <section class="py-8 bg-gray-50 border-t border-gray-200">
       <div class="container mx-auto px-4">
         <div class="flex justify-between items-center mb-8">
           <div class="border border-primary rounded px-4 py-2">
@@ -207,12 +228,20 @@ export default {
       productSections: [
         "TOP TRENDING PRODUCTS",
         "TOP WHOLESALE PRODUCTS",
+        "NewArrivals",
+        "TrendingProducts",
+        "WholesaleProducts",
+        "FeaturedProducts",
+        "DiscountedProducts",
+        "TopSellingProducts",
+        "AllProducts",
       ],
       showUserInfo: false,
       showAllProducts: false,
       allProductsList: [],
       categories: [],
       recentCategories: [],
+      cartItemCount: 0,
     };
   },
   computed: {
@@ -239,6 +268,7 @@ export default {
     // Fetch products immediately
     this.fetchAllProducts();
     this.fetchCategories();
+    this.fetchCartData();
   },
   beforeUnmount() {
     if (this.countdownInterval) {
@@ -336,6 +366,21 @@ export default {
         console.error('Logout error:', error);
       }
     },
+    async fetchCartData() {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get('http://localhost:8000/api/cart/', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.data && response.data.length > 0) {
+          this.cartItemCount = response.data[0].total_items;
+        }
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+      }
+    },
   },
 };
 </script>
@@ -375,4 +420,8 @@ export default {
 .group > div[class*="absolute"] {
   margin: 0 4px;
 }
+
+/* Add these new color variables */
+.border-primary-dark { border-color: #002347; }
+.border-secondary-dark { border-color: #6B0000; }
 </style>

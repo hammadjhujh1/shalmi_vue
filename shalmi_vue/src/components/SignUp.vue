@@ -19,63 +19,118 @@
 
     <!-- Main Content -->
     <main class="container mx-auto mt-12 px-4 flex-grow">
-      <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-primary">
-        <div class="bg-primary p-4 text-white text-center">
-          <h2 class="text-2xl font-semibold">Create Your Account</h2>
-          <p class="text-sm mt-1">Join Shalmi Online today</p>
+      <div class="flex justify-between items-start gap-8 mb-20">
+        <!-- GIF Container -->
+        <div class="hidden md:block w-[600px] h-[600px] bg-gray-100">
+          <!-- Placeholder for GIF -->
+          <!-- You can replace this div with your GIF later -->
         </div>
-        <form @submit="handleSubmit" class="p-6 space-y-6">
-          <div v-if="error" class="text-red-600 text-sm mb-4">{{ error }}</div>
-          
-          <div>
-            <label for="email" class="block text-primary font-medium mb-2">Email</label>
-            <input v-model="email" type="email" id="email" required 
-              class="w-full px-4 py-3 rounded-lg border border-primary focus:outline-none focus:ring-2 focus:ring-secondary transition">
+
+        <!-- Sign Up Form Container -->
+        <div class="w-full md:w-[500px]">
+          <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-primary">
+            <div class="bg-primary p-4 text-white text-center">
+              <h2 class="text-2xl font-semibold">Create Your Account</h2>
+              <p class="text-sm mt-1">Join Shalmi Online today</p>
+            </div>
+            <form @submit="handleSubmit" class="p-6 space-y-6">
+              <div v-if="error" class="text-red-600 text-sm mb-4">{{ error }}</div>
+              
+              <div>
+                <label for="email" class="block text-primary font-medium mb-2">Email</label>
+                <input v-model="email" type="email" id="email" required 
+                  class="w-full px-4 py-3 rounded-lg border border-primary focus:outline-none focus:ring-2 focus:ring-secondary transition">
+              </div>
+              
+              <div>
+                <label for="password" class="block text-primary font-medium mb-2">Password</label>
+                <input v-model="password" type="password" id="password" required 
+                  class="w-full px-4 py-3 rounded-lg border border-primary focus:outline-none focus:ring-2 focus:ring-secondary transition">
+              </div>
+              
+              <div>
+                <label class="flex items-start">
+                  <input v-model="agreedToTerms" type="checkbox" required class="form-checkbox text-secondary mt-1 mr-2">
+                  <span class="text-sm text-primary">
+                    I agree to the Terms of Use and Privacy Policy...
+                  </span>
+                </label>
+              </div>
+              
+              <button type="submit" 
+                class="w-full bg-secondary text-white py-3 rounded-lg hover:bg-primary transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                Create Account
+              </button>
+            </form>
           </div>
           
-          <div>
-            <label for="password" class="block text-primary font-medium mb-2">Password</label>
-            <input v-model="password" type="password" id="password" required 
-              class="w-full px-4 py-3 rounded-lg border border-primary focus:outline-none focus:ring-2 focus:ring-secondary transition">
+          <!-- Login Option -->
+          <div class="mt-8 text-center">
+            <p class="text-primary">Already have an account?</p>
+            <router-link to="/login" class="mt-4 inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition">
+              Log In
+            </router-link>
           </div>
-          
-          <div>
-            <label class="flex items-start">
-              <input v-model="agreedToTerms" type="checkbox" required class="form-checkbox text-secondary mt-1 mr-2">
-              <span class="text-sm text-primary">
-                I agree to the Terms of Use and Privacy Policy...
-              </span>
-            </label>
-          </div>
-          
-          <button type="submit" 
-            class="w-full bg-secondary text-white py-3 rounded-lg hover:bg-primary transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
-            Create Account
-          </button>
-        </form>
-      </div>
-      
-      <!-- Login Option -->
-      <div class="mt-8 text-center">
-        <p class="text-primary">Already have an account?</p>
-        <router-link to="/login" class="mt-4 inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition">
-          Log In
-        </router-link>
+        </div>
       </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white mt-16 py-8">
-      <div class="container mx-auto px-4">
-        <!-- Footer content -->
+    <footer class="bg-primary text-white pt-12 pb-6">
+      <!-- Company Description -->
+      <div class="container mx-auto px-4 mb-8">
+        <h2 class="text-2xl font-bold mb-4">Shalmi Online - Pakistan's Premier Wholesale Marketplace</h2>
+        <p class="text-white/80 mb-8 max-w-4xl">
+          Shalmi Online, established as Pakistan's first online wholesale marketplace, connects thousands of registered buyers and sellers nationwide. Our comprehensive platform offers products across multiple categories, including textiles, electronics, home goods, and more. We prioritize reliability, convenience, and efficiency, enabling our esteemed buyers and sellers to connect and trade seamlessly.
+        </p>
+      </div>
+
+      <!-- Main Footer Links -->
+      <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <!-- ... footer sections (Dispatch & Delivery, Returns & Support, Business, About) ... -->
+      </div>
+
+      <!-- Community & Mobile App -->
+      <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center border-t border-white/20 pt-8">
+        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+          <a href="https://www.facebook.com/ShalmiOnline" target="_blank" rel="noopener noreferrer" class="text-white hover:text-white">
+            <FacebookIcon class="h-6 w-6" />
+          </a>
+          <!-- ... other social media icons ... -->
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <img src="/placeholder.svg?height=40&width=120" alt="App Store" class="h-10" />
+          <img src="/placeholder.svg?height=40&width=120" alt="Google Play" class="h-10" />
+        </div>
+      </div>
+
+      <!-- Bottom Footer -->
+      <div class="container mx-auto px-4 mt-8 pt-6 border-t border-white/20">
+        <!-- ... copyright and payment methods ... -->
       </div>
     </footer>
   </div>
 </template>
 
 <script>
+import { 
+  FacebookIcon,
+  InstagramIcon,
+  TwitterIcon,
+  YoutubeIcon,
+  PhoneIcon
+} from 'vue-feather-icons'
+
 export default {
   name: 'SignUp',
+  components: {
+    FacebookIcon,
+    InstagramIcon,
+    TwitterIcon,
+    YoutubeIcon,
+    PhoneIcon
+  },
   data() {
     return {
       email: '',
@@ -158,3 +213,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+</style>

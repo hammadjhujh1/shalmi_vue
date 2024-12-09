@@ -96,6 +96,9 @@ export default {
           }
         });
 
+        // After successful addition
+        this.$root.$emit('cart-updated');
+        
         // Reset quantity after successful addition
         this.$set(this.cartQuantities, product.id, 0);
         

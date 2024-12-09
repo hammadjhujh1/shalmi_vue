@@ -12,6 +12,13 @@ import UsersManagement from '../components/admin/UsersManagement.vue'
 import CategoriesManagement from '../components/admin/CategoriesManagement.vue'
 import ProductsManagement from '../components/admin/ProductsManagement.vue' 
 import SignUp from '../components/SignUp.vue'
+import Checkout from '../components/Checkout.vue'
+import PlaceOrder from '../components/PlaceOrder.vue'
+import OrdersManagement from '../components/admin/OrdersManagement.vue'
+import TrackOrder from '../components/admin/TrackOrder.vue'
+import LandingPage from '../components/LandingPage.vue'
+import OrderSuccess from '../components/OrderSuccess.vue'
+import TrackOrderUser from '../components/TrackOrderUser.vue'
 
 Vue.use(VueRouter)
 
@@ -22,7 +29,7 @@ const router = new VueRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: LandingPage
     },
     {
       path: '/about',
@@ -84,6 +91,36 @@ const router = new VueRouter({
       path: '/admin/products',
       name: 'products',
       component: ProductsManagement
+    },
+    {
+      path: '/checkout',
+      name: 'checkout',
+      component: Checkout
+    },
+    {
+      path: '/place-order',
+      name: 'place-order',
+      component: PlaceOrder
+    },
+    {
+      path: '/admin/orders',
+      name: 'orders',
+      component: OrdersManagement
+    },
+    {
+      path: '/admin/track-order',
+      name: 'track-order',
+      component: TrackOrder
+    },
+    {
+      path: '/order-success/:orderId/:trackingNumber',
+      name: 'order-success',
+      component: OrderSuccess
+    },
+    {
+      path: '/track-order-user',
+      name: 'track-order-user',
+      component: TrackOrderUser
     }
   ]
 })
