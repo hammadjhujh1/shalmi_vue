@@ -4,7 +4,7 @@
     <header class="bg-primary text-white py-4 px-6 shadow-lg">
       <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center">
-          <img src="/placeholder.svg?height=40&width=40" alt="Shalmi Online Logo" class="h-10 w-10 mr-2">
+          <img src="@/assets/images/logo.png" alt="Shalmi Online Logo" class="h-10 w-10 mr-2">
           <h1 class="text-2xl font-bold">Shalmi Online</h1>
         </div>
         <div class="flex items-center space-x-4">
@@ -100,8 +100,7 @@
         </div>
         
         <div class="flex items-center space-x-4">
-          <img src="/placeholder.svg?height=40&width=120" alt="App Store" class="h-10" />
-          <img src="/placeholder.svg?height=40&width=120" alt="Google Play" class="h-10" />
+          <img src="@/assets/app-play.svg" alt="Get the App" class="h-10 cursor-pointer hover:opacity-90 transition-opacity" />
         </div>
       </div>
 
