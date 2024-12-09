@@ -17,7 +17,8 @@ export default defineConfig({
   ],
   build: {
     target: 'es2018',
-    minify: 'terser'
+    minify: 'terser',
+    outDir: 'public'
   },
   resolve: {
     alias: {
