@@ -10,14 +10,21 @@ export default defineConfig({
   plugins: [
     vue2(),
     vue2Jsx(),
-    legacy({
-      targets: ['ie >= 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
-    })
+    // legacy({
+    //   targets: ['chrome >= 64', 'edge >= 79', 'firefox >= 67', 'safari >= 11.1'],
+    //   modernPolyfills: true
+    // })
   ],
+  build: {
+    target: 'es2018',
+    minify: 'terser'
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  optimizeDeps: {
+    exclude: ['vue-demi']
   }
 })
