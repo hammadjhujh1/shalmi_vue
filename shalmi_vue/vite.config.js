@@ -18,7 +18,7 @@ export default defineConfig({
   build: {
     target: 'es2018',
     minify: 'terser',
-    outDir: 'public'
+    outDir: 'dist' 
   },
   resolve: {
     alias: {
@@ -27,5 +27,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['vue-demi']
-  }
+  },
 })
