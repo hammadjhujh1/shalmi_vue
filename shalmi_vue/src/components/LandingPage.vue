@@ -6,7 +6,12 @@
             <img src="@/assets/images/logo.png" alt="Shalmi Online Logo" class="h-10 w-10 mr-2">
             <div class="text-2xl font-bold">Shalmi Online</div>
           </div>
-          <nav class="flex items-center space-x-4">
+          <nav class="flex items-center space-x-6">
+            <a href="/about" class="text-sm hover:underline">About</a>
+            <a href="/contact" class="text-sm hover:underline">Contact</a>
+            <a href="/returns" class="text-sm hover:underline">Returns</a>
+            <a href="/blog" class="text-sm hover:underline">Blog</a>
+            <a href="/testimonials" class="text-sm hover:underline">Testimonials</a>
             <select class="bg-white text-primary border border-white rounded px-2 py-1 text-sm">
               <option>English</option>
               <option>Urdu</option>
@@ -26,15 +31,15 @@
           </p>
           <ul class="space-y-2 mb-8">
             <li class="flex items-center">
-              <CheckCircleIcon class="h-6 w-6 text-secondary mr-2" />
+              <CheckCircleIcon class="h-6 w-6 text-[#7f1c1d] mr-2" />
               <span>Wide range of wholesale products</span>
             </li>
             <li class="flex items-center">
-              <CheckCircleIcon class="h-6 w-6 text-secondary mr-2" />
+              <CheckCircleIcon class="h-6 w-6 text-[#7f1c1d] mr-2" />
               <span>Competitive prices for retailers</span>
             </li>
             <li class="flex items-center">
-              <CheckCircleIcon class="h-6 w-6 text-secondary mr-2" />
+              <CheckCircleIcon class="h-6 w-6 text-[#7f1c1d] mr-2" />
               <span>Seamless online ordering process</span>
             </li>
           </ul>
@@ -50,13 +55,13 @@
           </picture>
           <button
             @click="login"
-            class="bg-secondary hover:bg-primary text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            class="bg-primary hover:bg-white text-white hover:text-red-900 border-2 border-transparent hover:border-red-900 font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
           >
             Login to Proceed
           </button>
           <button
             @click="continueWithoutLogin"
-            class="bg-white hover:bg-gray-100 text-secondary border-2 border-secondary font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            class="bg-white hover:bg-[#7f1c1d] text-red-900 hover:text-white border-2 border-red-900 hover:border-transparent font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
           >
             Continue Without Login
           </button>
@@ -72,25 +77,25 @@
       </p>
     </div>
   
-    <!-- Main Footer Links -->
+    <!-- Updated Footer Links -->
     <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-      <!-- Dispatch & Delivery -->
+      <!-- Customer Support -->
       <div>
-        <h3 class="text-lg font-semibold mb-4">Dispatch & Delivery</h3>
+        <h3 class="text-lg font-semibold mb-4">Customer Support</h3>
         <ul class="space-y-2">
-          <li><a href="#" class="text-white hover:text-white">Delivery Options</a></li>
-          <li><a href="#" class="text-white hover:text-white">Customs & Import</a></li>
-          <li><a href="#" class="text-white hover:text-white">Track Orders</a></li>
+          <li><a href="/faq" class="text-white hover:text-white">FAQ</a></li>
+          <li><a href="/support" class="text-white hover:text-white">Support Center</a></li>
+          <li><a href="/shipping" class="text-white hover:text-white">Shipping Information</a></li>
         </ul>
       </div>
   
-      <!-- Returns & Support -->
+      <!-- Legal -->
       <div>
-        <h3 class="text-lg font-semibold mb-4">Returns & Support</h3>
+        <h3 class="text-lg font-semibold mb-4">Legal</h3>
         <ul class="space-y-2">
-          <li><a href="#" class="text-white hover:text-white">Return Policy</a></li>
-          <li><a href="#" class="text-white hover:text-white">Customer Service</a></li>
-          <li><a href="#" class="text-white hover:text-white">Resolution Center</a></li>
+          <li><a href="/privacy" class="text-white hover:text-white">Privacy Policy</a></li>
+          <li><a href="/terms" class="text-white hover:text-white">Terms & Conditions</a></li>
+          <li><a href="/guidelines" class="text-white hover:text-white">Seller Guidelines</a></li>
         </ul>
       </div>
   

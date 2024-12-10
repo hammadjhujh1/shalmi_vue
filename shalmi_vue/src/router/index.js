@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+// import HomeView from '../views/HomeView.vue'
 import SingleProductBuyer from '../components/SingleProductBuyer.vue'
 import WholesaleBuyer from '../components/WholesaleBuyer.vue'
 import Seller from '../components/Seller.vue'
@@ -19,6 +19,11 @@ import TrackOrder from '../components/admin/TrackOrder.vue'
 import LandingPage from '../components/LandingPage.vue'
 import OrderSuccess from '../components/OrderSuccess.vue'
 import TrackOrderUser from '../components/TrackOrderUser.vue'
+import AboutPage from '../components/pages/AboutPage.vue'
+import BlogPage from '../components/pages/BlogPage.vue'
+import TestimonialsPage from '../components/pages/TestimonialsPage.vue'
+import ReturnsPage from '../components/pages/ReturnsPage.vue'
+import ContactPage from '../components/pages/ContactPage.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +39,27 @@ const router = new VueRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue')
+      component: AboutPage
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: BlogPage
+    },
+    {
+      path: '/testimonials',
+      name: 'testimonials',
+      component: TestimonialsPage
+    },
+    {
+      path: '/returns',
+      name: 'returns',
+      component: ReturnsPage
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactPage
     },
     {
       path: '/single-product-buyer',

@@ -18,9 +18,12 @@
       <main class="container mx-auto mt-12 px-4 flex-grow">
         <div class="flex justify-between items-start gap-8 mb-20">
           <!-- GIF Container -->
-          <div class="hidden md:block w-[600px] h-[600px] bg-gray-100">
-            <!-- Placeholder for GIF -->
-            <!-- You can replace this div with your GIF later -->
+          <div class="hidden md:block w-[600px] h-[600px]">
+            <img 
+              src="@/assets/images/shalmi-login.png" 
+              alt="Shalmi Login"
+              class="w-full h-full object-cover rounded-lg"
+            >
           </div>
 
           <!-- Login Form Container -->
@@ -68,7 +71,7 @@
                 <button 
                   @click="login" 
                   :disabled="loading || !username || !password" 
-                  class="w-full bg-secondary text-white py-3 rounded-lg hover:bg-primary transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50 disabled:opacity-50"
+                  class="w-full bg-primary hover:bg-white text-white hover:text-red-900 border-2 border-transparent hover:border-red-900 font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
                 >
                   <span v-if="loading" class="flex items-center justify-center">
                     <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
@@ -85,7 +88,7 @@
                   <p class="text-sm text-gray-600">Don't have an account?</p>
                   <router-link 
                     to="/signup" 
-                    class="mt-2 w-full inline-block bg-white text-secondary border-2 border-secondary py-3 rounded-lg hover:bg-secondary hover:text-white transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50"
+                    class="mt-2 w-full inline-block bg-white hover:bg-[#7f1c1d] text-red-900 hover:text-white border-2 border-red-900 hover:border-transparent font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
                   >
                     Sign Up
                   </router-link>

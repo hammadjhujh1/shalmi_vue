@@ -20,10 +20,13 @@
     <!-- Main Content -->
     <main class="container mx-auto mt-12 px-4 flex-grow">
       <div class="flex justify-between items-start gap-8 mb-20">
-        <!-- GIF Container -->
-        <div class="hidden md:block w-[600px] h-[600px] bg-gray-100">
-          <!-- Placeholder for GIF -->
-          <!-- You can replace this div with your GIF later -->
+        <!-- Image Container -->
+        <div class="hidden md:block w-[600px] h-[600px]">
+          <img 
+            src="@/assets/images/signup-logo.png" 
+            alt="Signup"
+            class="w-full h-full object-cover rounded-lg"
+          >
         </div>
 
         <!-- Sign Up Form Container -->
@@ -58,7 +61,7 @@
               </div>
               
               <button type="submit" 
-                class="w-full bg-secondary text-white py-3 rounded-lg hover:bg-primary transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                class="w-full bg-primary hover:bg-white text-white hover:text-[#7F1C1D] border-2 border-transparent hover:border-[#7F1C1D] font-bold py-3 rounded-lg shadow-lg transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
                 Create Account
               </button>
             </form>
@@ -67,7 +70,9 @@
           <!-- Login Option -->
           <div class="mt-8 text-center">
             <p class="text-primary">Already have an account?</p>
-            <router-link to="/login" class="mt-4 inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition">
+            <router-link to="/login" 
+              class="mt-4 inline-block bg-white hover:bg-[#7F1C1D] text-[#7F1C1D] hover:text-white border-2 border-[#7F1C1D] hover:border-transparent px-6 py-2 rounded-full hover:bg-[#7f1c1d] transition"
+            >
               Log In
             </router-link>
           </div>
