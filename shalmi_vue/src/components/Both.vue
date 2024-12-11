@@ -46,14 +46,7 @@
               </div>
             </div>
             <div class="flex-1 max-w-xl relative">
-              <input
-                type="search"
-                placeholder="Search products..."
-                class="w-full pr-10 px-4 py-2 border rounded focus:outline-none"
-              />
-              <button class="absolute right-1 top-1 bg-primary text-white px-2 py-2 rounded hover:bg-primary/90">
-                🔍
-              </button>
+              <SearchBar @search="handleSearch" />
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -204,6 +197,7 @@ import DiscountedProducts from './DiscountedProducts.vue'
 import TopSellingProducts from './TopSellingProducts.vue'
 import AllProducts from './AllProducts.vue'
 import axios from 'axios'
+import SearchBar from './SearchBar.vue'
 
 export default {
   components: {
@@ -214,6 +208,7 @@ export default {
     DiscountedProducts,
     TopSellingProducts,
     AllProducts,
+    SearchBar,
   },
   data() {
     return {
@@ -380,6 +375,10 @@ export default {
       } catch (error) {
         console.error('Error fetching cart:', error);
       }
+    },
+    handleSearch(query) {
+      console.log('Searching for:', query)
+      // Add your search logic here
     },
   },
 };

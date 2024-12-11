@@ -65,6 +65,12 @@
           >
             Continue Without Login
           </button>
+          <button
+            @click="goToAdmin"
+            class="bg-gray-800 hover:bg-white text-white hover:text-gray-800 border-2 border-transparent hover:border-gray-800 font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+          >
+            Admin Panel
+          </button>
         </div>
       </main>
   
@@ -195,6 +201,9 @@
       continueWithoutLogin() {
         // Implement continue without login functionality
         console.log('Continue without login clicked')
+      },
+      goToAdmin() {
+        this.$router.push('/admin')
       }
     }
   }
