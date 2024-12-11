@@ -158,15 +158,24 @@ export default {
       this.error = null;
 
       try {
-        const response = await api.post('/api/signup/', {
+        // Create user account
+        const signupResponse = await api.post('/api/signup/', {
           email: this.email,
           password: this.password,
         });
 
-        const { access_token, user } = response.data;
+        // Get JWT tokens
+        const tokenResponse = await api.post('/api/token/', {
+          email: this.email,
+          password: this.password,
+        });
+
+        const { access, refresh } = tokenResponse.data;
+        const user = signupResponse.data.user;
         
-        // Store token and user data
-        localStorage.setItem('access_token', access_token);
+        // Store tokens and user data
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
         localStorage.setItem('user', JSON.stringify(user));
 
         // Redirect to dashboard after successful signup
