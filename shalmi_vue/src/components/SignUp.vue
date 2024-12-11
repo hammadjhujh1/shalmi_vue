@@ -158,7 +158,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await api.post('/signup/', {
+        const response = await api.post('/api/signup/', {
           email: this.email,
           password: this.password,
         });
@@ -174,7 +174,11 @@ export default {
         
       } catch (error) {
         console.error('Error during signup:', error);
-        this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
+        if (error.response?.status === 403) {
+          this.error = 'Email already exists. Please try logging in instead.';
+        } else {
+          this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
+        }
       } finally {
         this.isLoading = false;
       }
