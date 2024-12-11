@@ -224,27 +224,10 @@ export default {
         localStorage.setItem('user', JSON.stringify(user));
         
         // Redirect based on user role
-        switch(user.role) {
-          case 'ADM':
-            this.$router.push('/admin');
-            break;
-          case 'MANAGER':
-            this.$router.push('/manager');
-            break;
-          case 'SELLER':
-            this.$router.push('/seller');
-            break;
-          case 'EU':
-            this.$router.push('/both');
-            break;
-          case 'WHOLESALE_BUYER':
-            this.$router.push('/wholesale-buyer');
-            break;
-          case 'SINGLE_PRODUCT_BUYER':
-            this.$router.push('/single-product-buyer');
-            break;
-          default:
-            this.$router.push('/');
+        if (user.role === 'ADM') {
+          this.$router.push('/admin');
+        } else {
+          this.$router.push('/both');
         }
       } catch (error) {
         console.error('Login error:', error);

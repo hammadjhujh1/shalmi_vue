@@ -125,6 +125,7 @@ import {
   YoutubeIcon,
   PhoneIcon
 } from 'vue-feather-icons'
+import api from '@/config/api'
 
 export default {
   name: 'SignUp',
@@ -145,32 +146,6 @@ export default {
     }
   },
   methods: {
-    getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-    },
-
-    async getCsrfToken() {
-      try {
-        // First make a request to get the CSRF cookie set
-        await fetch(`${process.env.VUE_APP_API_URL}/api/get-csrf-token/`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-        
-        // Then get the token from cookies
-        const token = this.getCookie('csrftoken');
-        if (!token) {
-          throw new Error('No CSRF token found');
-        }
-        return token;
-      } catch (error) {
-        console.error('Error getting CSRF token:', error);
-        throw error;
-      }
-    },
-
     async handleSubmit(e) {
       e.preventDefault();
       
@@ -183,33 +158,23 @@ export default {
       this.error = null;
 
       try {
-        const csrfToken = await this.getCsrfToken();
-        console.log('CSRF Token:', csrfToken); // For debugging
-        
-        const response = await fetch(`${process.env.VUE_APP_API_URL}/api/signup/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-          }),
+        const response = await api.post('/signup/', {
+          email: this.email,
+          password: this.password,
         });
 
-        const data = await response.json();
+        const { access_token, user } = response.data;
         
-        if (response.ok) {
-          console.log('Signup successful:', data);
-          this.$router.push('/login');
-        } else {
-          this.error = data.message || 'Signup failed. Please try again.';
-        }
+        // Store token and user data
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        // Redirect to dashboard after successful signup
+        this.$router.push('/dashboard');
+        
       } catch (error) {
         console.error('Error during signup:', error);
-        this.error = 'An error occurred. Please try again later.';
+        this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
       } finally {
         this.isLoading = false;
       }

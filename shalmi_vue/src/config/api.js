@@ -24,4 +24,36 @@ api.interceptors.request.use(
   }
 );
 
+// Add response interceptor for token refresh
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = localStorage.getItem('refresh_token');
+        const response = await axios.post(`${API_URL}/api/token/refresh/`, {
+          refresh: refreshToken
+        });
+
+        const { access } = response.data;
+        localStorage.setItem('access_token', access);
+        
+        // Update the failed request with new token
+        originalRequest.headers['Authorization'] = `Bearer ${access}`;
+        return api(originalRequest);
+      } catch (error) {
+        // If refresh fails, clear tokens and redirect to login
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api; 
