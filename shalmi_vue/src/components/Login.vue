@@ -225,7 +225,7 @@ export default {
         
         // Redirect based on user role
         switch(user.role) {
-          case 'ADMIN':
+          case 'ADM':
             this.$router.push('/admin');
             break;
           case 'MANAGER':
@@ -234,7 +234,7 @@ export default {
           case 'SELLER':
             this.$router.push('/seller');
             break;
-          case 'BOTH':
+          case 'EU':
             this.$router.push('/both');
             break;
           case 'WHOLESALE_BUYER':
