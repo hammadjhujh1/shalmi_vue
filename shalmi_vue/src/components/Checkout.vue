@@ -60,6 +60,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -76,7 +77,7 @@ export default {
     async fetchCart() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:8000/api/cart/', {
+        const response = await api.get('/cart/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

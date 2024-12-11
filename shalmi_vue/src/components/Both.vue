@@ -198,6 +198,7 @@ import TopSellingProducts from './TopSellingProducts.vue'
 import AllProducts from './AllProducts.vue'
 import axios from 'axios'
 import SearchBar from './SearchBar.vue'
+import api from '@/config/api'
 
 export default {
   components: {
@@ -348,7 +349,7 @@ export default {
     async logout() {
       try {
         const token = localStorage.getItem('access_token');
-        await axios.post('http://localhost:8000/logout/', {}, {
+        await api.post('/logout/', {}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -364,7 +365,7 @@ export default {
     async fetchCartData() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:8000/api/cart/', {
+        const response = await api.get('/cart/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

@@ -117,6 +117,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -175,11 +176,7 @@ export default {
         console.log('Sending user data:', userData);
 
         if (this.editingUser) {
-          await axios.put(
-            `http://localhost:8000/api/users/${this.editingUser.id}/`, 
-            userData,
-            config
-          );
+          await api.put(`/users/${this.editingUser.id}/`, userData, config);
         } else {
           await axios.post(
             'http://localhost:8000/api/users/', 

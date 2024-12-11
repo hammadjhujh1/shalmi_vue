@@ -28,4 +28,15 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['vue-demi']
   },
+  define: {
+    'process.env': process.env
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: process.env.VUE_APP_API_URL || 'http://localhost:8000',
+        changeOrigin: true,
+      }
+    }
+  }
 })

@@ -154,7 +154,7 @@ export default {
     async getCsrfToken() {
       try {
         // First make a request to get the CSRF cookie set
-        await fetch('http://localhost:8000/api/get-csrf-token/', {
+        await fetch(`${process.env.VUE_APP_API_URL}/api/get-csrf-token/`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -186,7 +186,7 @@ export default {
         const csrfToken = await this.getCsrfToken();
         console.log('CSRF Token:', csrfToken); // For debugging
         
-        const response = await fetch('http://localhost:8000/api/signup/', {
+        const response = await fetch(`${process.env.VUE_APP_API_URL}/api/signup/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

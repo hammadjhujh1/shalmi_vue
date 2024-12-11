@@ -159,7 +159,7 @@ export default {
         }
 
         const response = await axios.get(
-          `http://localhost:8000/api/shipments/${this.trackingNumber}/`,
+          `/shipments/${this.trackingNumber}/`,
           {
             headers: {
               'Authorization': `Bearer ${token}`

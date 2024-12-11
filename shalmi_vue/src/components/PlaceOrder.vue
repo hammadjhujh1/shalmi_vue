@@ -107,6 +107,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -163,7 +164,7 @@ export default {
           }]
         };
 
-        const response = await axios.post('http://localhost:8000/api/orders/create/', orderData, {
+        const response = await api.post('/orders/create/', orderData, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

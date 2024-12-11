@@ -87,6 +87,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -116,7 +117,7 @@ export default {
     async updateOrderStatus(orderId, newStatus) {
       try {
         const token = localStorage.getItem('access_token');
-        await axios.patch(`http://localhost:8000/api/orders/${orderId}/`, 
+        await api.patch(`/orders/${orderId}/`, 
           { status: newStatus },
           {
             headers: {

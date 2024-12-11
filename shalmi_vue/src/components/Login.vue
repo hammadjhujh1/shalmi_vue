@@ -157,6 +157,7 @@ import {
   YoutubeIcon,
   PhoneIcon
 } from 'vue-feather-icons'
+import api from '@/config/api'
 
 export default {
   components: {
@@ -211,85 +212,46 @@ export default {
 
       this.loading = true;
       try {
-        console.log('Attempting login...'); // Debug log
-        const response = await fetch('http://localhost:8000/login/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: this.username,
-            password: this.password,
-          }),
+        const response = await api.post('/login/', {
+          username: this.username,
+          password: this.password,
         });
+
+        const { access_token, user } = response.data;
         
-        console.log('Response received:', response.status); // Debug log
-        const data = await response.json();
-        console.log('Response data:', data); // Debug log
+        // Store token and user data
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
         
-        if (data.status === 'success') {
-          // Store tokens in localStorage
-          localStorage.setItem('access_token', data.tokens.access);
-          localStorage.setItem('refresh_token', data.tokens.refresh);
-          
-          // Store user info and log role
-          const userRole = data.user.role.toLowerCase(); // Convert role to lowercase
-          console.log('User Role:', userRole); // Log the role
-          
-          this.user = {
-            username: data.user.username,
-            email: data.user.email,
-            role: userRole // Store lowercase role
-          };
-          
-          // Store user info in localStorage
-          localStorage.setItem('user', JSON.stringify(this.user));
-          
-          if (this.remember) {
-            localStorage.setItem('remembered_username', this.username);
-          } else {
-            localStorage.removeItem('remembered_username');
-          }
-          
-          console.log('Login successful, redirecting based on role:', userRole);
-          this.redirectUser();
-          return userRole; // Return the role
-        } else {
-          this.error = data.message || 'Login failed';
+        // Redirect based on user role
+        switch(user.role) {
+          case 'ADMIN':
+            this.$router.push('/admin');
+            break;
+          case 'MANAGER':
+            this.$router.push('/manager');
+            break;
+          case 'SELLER':
+            this.$router.push('/seller');
+            break;
+          case 'BOTH':
+            this.$router.push('/both');
+            break;
+          case 'WHOLESALE_BUYER':
+            this.$router.push('/wholesale-buyer');
+            break;
+          case 'SINGLE_PRODUCT_BUYER':
+            this.$router.push('/single-product-buyer');
+            break;
+          default:
+            this.$router.push('/');
         }
       } catch (error) {
         console.error('Login error:', error);
-        this.error = 'An error occurred during login. Please try again.';
+        this.error = error.response?.data?.detail || 'Login failed. Please try again.';
       } finally {
         this.loading = false;
       }
-    },
-    redirectUser() {
-      if (!this.$router) {
-        console.error('Router instance is not available');
-        this.error = 'Navigation error: Router not available';
-        return;
-      }
-
-      const rolePaths = {
-        spb: '/single-product-buyer/',
-        wsb: '/wholesale-buyer/',
-        slr: '/seller/',
-        eu: '/both/',
-        mgr: '/manager/',
-        adm: '/admin/',
-      };
-
-      const userRole = this.user.role.toLowerCase();
-      const targetPath = rolePaths[userRole] || '/';
-      console.log('Role:', userRole, 'Redirecting to:', targetPath);
-
-      this.$router.push(targetPath).catch((err) => {
-        if (err.name !== 'NavigationDuplicated') {
-          console.error('Navigation error:', err);
-          this.error = 'Navigation failed: ' + err.message;
-        }
-      });
     }
   },
   mounted() {

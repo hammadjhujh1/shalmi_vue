@@ -48,6 +48,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   props: {
@@ -73,7 +74,7 @@ export default {
     async fetchProducts() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get(`http://localhost:8000/api/${this.endpoint}/`, {
+        const response = await api.get(`/${this.endpoint}/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

@@ -170,6 +170,7 @@
 
 <script>
 import axios from 'axios';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -322,7 +323,7 @@ export default {
       if (confirm('Are you sure you want to delete this category? This will also delete all subcategories.')) {
         try {
           const token = localStorage.getItem('access_token');
-          await axios.delete(`http://localhost:8000/api/categories/${categoryId}/`, {
+          await api.delete(`/categories/${categoryId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -338,7 +339,7 @@ export default {
       if (confirm('Are you sure you want to delete this subcategory?')) {
         try {
           const token = localStorage.getItem('access_token');
-          await axios.delete(`http://localhost:8000/api/subcategories/${subcategoryId}/`, {
+          await api.delete(`/subcategories/${subcategoryId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }

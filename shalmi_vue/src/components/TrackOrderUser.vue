@@ -87,6 +87,7 @@
   
   <script>
   import axios from 'axios';
+  import api from '@/config/api';
   
   export default {
     name: 'TrackOrder',
@@ -129,14 +130,11 @@
             throw new Error('Please log in to track your order');
           }
   
-          const response = await axios.get(
-            `http://localhost:8000/api/shipments/${this.trackingNumber}/`,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
+          const response = await api.get(`/shipments/${this.trackingNumber}/`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
             }
-          );
+          });
   
           this.shipmentDetails = response.data;
           
