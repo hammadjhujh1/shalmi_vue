@@ -1,34 +1,14 @@
 import axios from 'axios';
-
-const API_URL = process.env.VUE_APP_API_URL || 'https://shalmi-db.onrender.com';
+import router from '@/router';
 
 const api = axios.create({
-  baseURL: API_URL,
-  timeout: 30000,
+  baseURL: 'https://shalmi-db.onrender.com',
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    'Content-Type': 'application/json'
   }
 });
 
-// Add logging interceptor
-api.interceptors.request.use(request => {
-  console.log('Starting Request:', request);
-  return request;
-});
-
-api.interceptors.response.use(
-  response => {
-    console.log('Response:', response);
-    return response;
-  },
-  error => {
-    console.log('Response Error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Add request interceptor to include auth token
+// Add a request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
@@ -42,34 +22,44 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for token refresh
+// Add a response interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
+    // If the error status is 401 and there is no originalRequest._retry flag,
+    // it means the token has expired and we need to refresh it
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
         const refreshToken = localStorage.getItem('refresh_token');
-        const response = await axios.post(`${API_URL}/api/token/refresh/`, {
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        // Using api instance instead of axios directly
+        const response = await api.post('/api/token/refresh/', {
           refresh: refreshToken
         });
 
-        const { access } = response.data;
-        localStorage.setItem('access_token', access);
-        
-        // Update the failed request with new token
-        originalRequest.headers['Authorization'] = `Bearer ${access}`;
-        return api(originalRequest);
-      } catch (error) {
-        // If refresh fails, clear tokens and redirect to login
+        if (response.data.access) {
+          localStorage.setItem('access_token', response.data.access);
+          
+          // Update the original request with the new token
+          originalRequest.headers['Authorization'] = `Bearer ${response.data.access}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        // If refresh token fails, logout user and redirect to login
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
-        return Promise.reject(error);
+        router.push('/login');
+        return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );
