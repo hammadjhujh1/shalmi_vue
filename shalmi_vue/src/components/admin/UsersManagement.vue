@@ -137,16 +137,23 @@ export default {
   methods: {
     async fetchUsers() {
       try {
-        const token = localStorage.getItem('access_token');
-        const response = await api.get('/api/users/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const accessToken = localStorage.getItem('access_token');
+        const refreshToken = localStorage.getItem('refresh_token');
+        
+        if (!accessToken || !refreshToken) {
+          this.$router.push('/login');
+          return;
+        }
+
+        const response = await api.get('/api/users/');
         this.users = response.data;
       } catch (error) {
         console.error('Error fetching users:', error);
-        alert(error.response?.data?.detail || 'Failed to fetch users');
+        if (error.message === 'No refresh token available') {
+          this.$router.push('/login');
+        } else {
+          alert(error.response?.data?.detail || 'Failed to fetch users');
+        }
       }
     },
     editUser(user) {
@@ -230,7 +237,14 @@ export default {
     }
   },
   mounted() {
-    this.fetchUsers();
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    
+    if (accessToken && refreshToken) {
+      this.fetchUsers();
+    } else {
+      this.$router.push('/login');
+    }
   }
 }
 </script> 

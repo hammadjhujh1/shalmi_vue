@@ -212,19 +212,26 @@ export default {
 
       this.loading = true;
       try {
-        const response = await api.post('/login/', {
+        const response = await api.post('/api/token/', {
           username: this.username,
           password: this.password,
         });
 
-        const { access_token, user } = response.data;
+        const { access, refresh } = response.data;
         
-        // Store token and user data
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
+        // Store both tokens
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
+        
+        // Store remembered username if checkbox is checked
+        if (this.remember) {
+          localStorage.setItem('remembered_username', this.username);
+        } else {
+          localStorage.removeItem('remembered_username');
+        }
         
         // Redirect based on user role
-        if (user.role === 'ADM') {
+        if (response.data.user?.role === 'ADM') {
           this.$router.push('/admin');
         } else {
           this.$router.push('/both');

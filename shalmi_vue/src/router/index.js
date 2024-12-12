@@ -152,11 +152,22 @@ const router = new VueRouter({
 
 // Add navigation guard
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('access_token')
-  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
-    next('/')
+  // List of routes that require authentication
+  const protectedRoutes = ['/admin', '/admin/users', '/admin/products', '/admin/categories'];
+  
+  const accessToken = localStorage.getItem('access_token');
+  const refreshToken = localStorage.getItem('refresh_token');
+  
+  // Check if route requires authentication
+  if (protectedRoutes.some(route => to.path.startsWith(route))) {
+    if (!accessToken || !refreshToken) {
+      // Redirect to login if no tokens
+      next('/login');
+    } else {
+      next();
+    }
   } else {
-    next()
+    next();
   }
 })
 
