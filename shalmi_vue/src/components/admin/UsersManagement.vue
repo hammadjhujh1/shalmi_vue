@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 import api from '@/config/api';
 
 export default {
@@ -138,7 +138,7 @@ export default {
     async fetchUsers() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:8000/api/users/', {
+        const response = await api.get('/api/users/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -176,13 +176,9 @@ export default {
         console.log('Sending user data:', userData);
 
         if (this.editingUser) {
-          await api.put(`/users/${this.editingUser.id}/`, userData, config);
+          await api.put(`/api/users/${this.editingUser.id}/`, userData, config);
         } else {
-          await axios.post(
-            'http://localhost:8000/api/users/', 
-            userData,
-            config
-          );
+          await api.post('/api/users/', userData, config);
         }
         await this.fetchUsers();
         this.showAddUserModal = false;
@@ -197,7 +193,7 @@ export default {
       if (confirm('Are you sure you want to deactivate this user?')) {
         try {
           const token = localStorage.getItem('access_token');
-          await axios.delete(`http://localhost:8000/api/users/${userId}/`, {
+          await api.delete(`/api/users/${userId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'

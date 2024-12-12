@@ -355,8 +355,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { debounce } from 'lodash';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -387,8 +387,6 @@ export default {
     async fetchProducts() {
       try {
         const token = localStorage.getItem('access_token');
-        
-        // Create an object with the filters
         const params = new URLSearchParams();
         
         if (this.filters.category) {
@@ -407,16 +405,12 @@ export default {
           params.append('max_price', this.filters.maxPrice);
         }
 
-        console.log('Sending filters to API:', Object.fromEntries(params));
-
-        const response = await axios.get('http://localhost:8000/api/products/', { 
+        const response = await api.get('/api/products/', { 
           params: params,
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        
-        console.log('API Response:', response.data);
         
         this.products = response.data.map(product => ({
           ...product,
@@ -439,7 +433,7 @@ export default {
     async fetchCategories() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:8000/api/categories/', {
+        const response = await api.get('/api/categories/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -457,7 +451,7 @@ export default {
       }
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get(`http://localhost:8000/api/subcategories/`, {
+        const response = await api.get(`/api/subcategories/`, {
           params: {
             category: this.productForm.category
           },
@@ -502,7 +496,6 @@ export default {
         const token = localStorage.getItem('access_token');
         const formData = new FormData();
         
-        // Append all product data to FormData
         formData.append('title', this.productForm.title);
         formData.append('category', this.productForm.category);
         if (this.productForm.subcategory) {
@@ -512,32 +505,27 @@ export default {
         formData.append('stock', this.productForm.stock);
         formData.append('status', this.productForm.status);
         
-        // Only append image if it exists and is a new file
         if (this.productForm.image && this.productForm.image instanceof File) {
           formData.append('image', this.productForm.image);
         }
 
-        console.log('FormData being sent:', Object.fromEntries(formData));
-
         if (this.editingProduct) {
-          await axios.put(
-            `http://localhost:8000/api/products/${this.editingProduct.id}/`, 
+          await api.put(
+            `/api/products/${this.editingProduct.id}/`, 
             formData,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
-                // Don't set Content-Type - let axios set it automatically for FormData
               }
             }
           );
         } else {
-          await axios.post(
-            'http://localhost:8000/api/products/', 
+          await api.post(
+            '/api/products/', 
             formData,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
-                // Don't set Content-Type - let axios set it automatically for FormData
               }
             }
           );
@@ -557,7 +545,7 @@ export default {
       if (confirm('Are you sure you want to delete this product?')) {
         try {
           const token = localStorage.getItem('access_token');
-          await axios.delete(`http://localhost:8000/api/products/${productId}/`, {
+          await api.delete(`/api/products/${productId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -603,24 +591,14 @@ export default {
 
     async updateProductLabel(productId, label, value) {
       try {
-        console.log('Updating label:', {
-          productId,
-          label,
-          value
-        });
-
         const token = localStorage.getItem('access_token');
-        
-        // Create labels object with just the updated label
         const labelUpdate = {
           [label]: value
         };
 
-        console.log('Sending label update:', labelUpdate);
-
-        const response = await axios.patch(
-          `http://localhost:8000/api/products/${productId}/update_labels/`,  // Use update_labels endpoint
-          labelUpdate,  // Send only the updated label
+        const response = await api.patch(
+          `/api/products/${productId}/update_labels/`,
+          labelUpdate,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -629,8 +607,7 @@ export default {
           }
         );
         
-        console.log('Label update response:', response.data);
-        await this.fetchProducts(); // Refresh the products list
+        await this.fetchProducts();
       } catch (error) {
         console.error('Error updating product label:', error);
         console.error('Error response:', error.response?.data);
@@ -641,8 +618,8 @@ export default {
     async updateProductStatus(productId, newStatus) {
       try {
         const token = localStorage.getItem('access_token');
-        await axios.patch(
-          `http://localhost:8000/api/products/${productId}/`,
+        await api.patch(
+          `/api/products/${productId}/`,
           { status: newStatus },
           {
             headers: {
@@ -654,7 +631,6 @@ export default {
       } catch (error) {
         console.error('Error updating product status:', error);
         alert(error.response?.data?.detail || 'Failed to update status');
-        // Revert the status change in the UI if the API call fails
         await this.fetchProducts();
       }
     }

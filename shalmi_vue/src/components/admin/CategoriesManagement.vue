@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 import api from '@/config/api';
 
 export default {
@@ -202,13 +202,12 @@ export default {
       this.error = null;
       try {
         const token = localStorage.getItem('access_token');
-        console.log('Token being used:', token);
 
         if (!token) {
           throw new Error('No authentication token found');
         }
 
-        const response = await axios.get('http://localhost:8000/api/categories/', {
+        const response = await api.get('/api/categories/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -268,14 +267,14 @@ export default {
 
         if (this.modalType === 'category') {
           if (this.editingItem) {
-            await axios.put(
-              `http://localhost:8000/api/categories/${this.editingItem.id}/`, 
+            await api.put(    
+              `/api/categories/${this.editingItem.id}/`, 
               this.form,
               config
             );
           } else {
-            await axios.post(
-              'http://localhost:8000/api/categories/', 
+            await api.post(
+              '/api/categories/', 
               this.form,
               config
             );
@@ -290,14 +289,14 @@ export default {
           console.log('Subcategory data being sent:', subcategoryData);
 
           if (this.editingItem) {
-            await axios.put(
-              `http://localhost:8000/api/subcategories/${this.editingItem.id}/`, 
+            await api.put(
+              `/api/subcategories/${this.editingItem.id}/`, 
               subcategoryData,
               config
             );
           } else {
-            await axios.post(
-              'http://localhost:8000/api/subcategories/', 
+            await api.post(
+              '/api/subcategories/', 
               subcategoryData,
               config
             );
@@ -323,7 +322,7 @@ export default {
       if (confirm('Are you sure you want to delete this category? This will also delete all subcategories.')) {
         try {
           const token = localStorage.getItem('access_token');
-          await api.delete(`/categories/${categoryId}/`, {
+          await api.delete(`/api/categories/${categoryId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -339,7 +338,7 @@ export default {
       if (confirm('Are you sure you want to delete this subcategory?')) {
         try {
           const token = localStorage.getItem('access_token');
-          await api.delete(`/subcategories/${subcategoryId}/`, {
+          await api.delete(`/api/subcategories/${subcategoryId}/`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
