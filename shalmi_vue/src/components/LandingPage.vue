@@ -178,6 +178,7 @@
     PhoneIcon
   } from 'vue-feather-icons'
   import heroImage from '../assets/images/hero-banner.png'
+  import TokenGenerator from './TokenGenerator.vue'
   
   export default {
     name: 'LandingPage',
@@ -187,7 +188,8 @@
       InstagramIcon,
       TwitterIcon,
       YoutubeIcon,
-      PhoneIcon
+      PhoneIcon,
+      TokenGenerator
     },
     data() {
       return {
