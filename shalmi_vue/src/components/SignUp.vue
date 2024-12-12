@@ -158,36 +158,20 @@ export default {
       this.error = null;
 
       try {
-        // Create user account
-        const signupResponse = await api.post('/api/signup/', {
+        const response = await api.post('/api/signup/', {
           email: this.email,
           password: this.password,
         });
-
-        // Get JWT tokens
-        const tokenResponse = await api.post('/api/token/', {
-          email: this.email,
-          password: this.password,
-        });
-
-        const { access, refresh } = tokenResponse.data;
-        const user = signupResponse.data.user;
         
-        // Store tokens and user data
-        localStorage.setItem('access_token', access);
-        localStorage.setItem('refresh_token', refresh);
-        localStorage.setItem('user', JSON.stringify(user));
-
-        // Redirect to dashboard after successful signup
-        this.$router.push('/dashboard');
-        
+        if (response.status === 201) {
+          console.log('Signup successful:', response.data);
+          this.$router.push('/login');
+        } else {
+          this.error = response.data.message || 'Signup failed. Please try again.';
+        }
       } catch (error) {
         console.error('Error during signup:', error);
-        if (error.response?.status === 403) {
-          this.error = 'Email already exists. Please try logging in instead.';
-        } else {
-          this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
-        }
+        this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
       } finally {
         this.isLoading = false;
       }
