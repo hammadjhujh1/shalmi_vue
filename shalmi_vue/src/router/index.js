@@ -147,11 +147,6 @@ const router = new VueRouter({
       path: '/track-order-user',
       name: 'track-order-user',
       component: TrackOrderUser
-    },
-    {
-      path: '/token-generator',
-      name: 'token-generator',
-      component: TokenGenerator
     }
   ]
 })

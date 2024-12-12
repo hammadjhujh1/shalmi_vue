@@ -12,7 +12,12 @@
             <a href="/returns" class="text-sm hover:underline">Returns</a>
             <a href="/blog" class="text-sm hover:underline">Blog</a>
             <a href="/testimonials" class="text-sm hover:underline">Testimonials</a>
-            <a href="/token-generator" class="text-sm hover:underline">Generate API Token</a>
+            <button 
+              @click="showTokenModal = true" 
+              class="text-sm hover:underline"
+            >
+              Generate API Token
+            </button>
             <select class="bg-white text-primary border border-white rounded px-2 py-1 text-sm">
               <option>English</option>
               <option>Urdu</option>
@@ -179,6 +184,7 @@
     PhoneIcon
   } from 'vue-feather-icons'
   import heroImage from '../assets/images/hero-banner.png'
+  import TokenGenerator from './TokenGenerator.vue'
   
   export default {
     name: 'LandingPage',
@@ -189,9 +195,11 @@
       TwitterIcon,
       YoutubeIcon,
       PhoneIcon,
+      TokenGenerator,
     },
     data() {
       return {
+        showTokenModal: false,
         heroImage
       }
     },

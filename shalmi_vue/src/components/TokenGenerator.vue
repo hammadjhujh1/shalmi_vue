@@ -65,9 +65,14 @@
   
   export default {
     name: 'TokenGenerator',
+    props: {
+      modelValue: {
+        type: Boolean,
+        default: false
+      }
+    },
     data() {
       return {
-        showModal: false,
         credentials: {
           username: '',
           password: ''
@@ -76,6 +81,14 @@
       };
     },
     computed: {
+      showModal: {
+        get() {
+          return this.modelValue;
+        },
+        set(value) {
+          this.$emit('update:modelValue', value);
+        }
+      },
       tokenFormat() {
         if (!this.token) return '';
         return `// Add this to your headers:
@@ -86,24 +99,22 @@
     },
     methods: {
       async generateToken() {
-        console.log('Attempting to generate token with credentials:', this.credentials);
         try {
           const response = await api.post('/api/token/', this.credentials);
-          this.token = response.data.access;
-          console.log('Token generated successfully:', this.token);
+          if (response.data && response.data.access) {
+            this.token = response.data.access;
+          } else {
+            throw new Error('Invalid response format');
+          }
         } catch (error) {
           console.error('Error generating token:', error);
-          alert('Failed to generate token. Please check your credentials.');
+          alert(error.response?.data?.detail || 'Failed to generate token. Please check your credentials.');
         }
       },
       copyToken() {
         console.log('Copying token to clipboard');
         navigator.clipboard.writeText(this.tokenFormat);
         alert('Token copied to clipboard!');
-      },
-      openModal() {
-        console.log('Opening modal');
-        this.showModal = true;
       },
       closeModal() {
         console.log('Closing modal and resetting state');
