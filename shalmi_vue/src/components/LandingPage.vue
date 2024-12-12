@@ -189,7 +189,6 @@
       TwitterIcon,
       YoutubeIcon,
       PhoneIcon,
-      TokenGenerator
     },
     data() {
       return {
