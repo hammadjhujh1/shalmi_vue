@@ -24,6 +24,7 @@ import BlogPage from '../components/pages/BlogPage.vue'
 import TestimonialsPage from '../components/pages/TestimonialsPage.vue'
 import ReturnsPage from '../components/pages/ReturnsPage.vue'
 import ContactPage from '../components/pages/ContactPage.vue'
+import TokenGenerator from '../components/TokenGenerator.vue'
 
 Vue.use(VueRouter)
 
@@ -146,6 +147,11 @@ const router = new VueRouter({
       path: '/track-order-user',
       name: 'track-order-user',
       component: TrackOrderUser
+    },
+    {
+      path: '/token-generator',
+      name: 'token-generator',
+      component: TokenGenerator
     }
   ]
 })
