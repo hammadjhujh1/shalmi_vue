@@ -158,20 +158,38 @@ export default {
       this.error = null;
 
       try {
+        console.log('Sending signup request with:', {
+          email: this.email,
+          password: this.password
+        });
+
         const response = await api.post('/api/signup/', {
           email: this.email,
           password: this.password,
         });
         
-        if (response.status === 201) {
+        console.log('Signup response:', response);
+
+        if (response && response.status === 201) {
           console.log('Signup successful:', response.data);
           this.$router.push('/login');
         } else {
-          this.error = response.data.message || 'Signup failed. Please try again.';
+          this.error = response?.data?.message || 'Signup failed. Please try again.';
         }
       } catch (error) {
-        console.error('Error during signup:', error);
-        this.error = error.response?.data?.detail || 'An error occurred. Please try again later.';
+        console.error('Full error object:', error);
+        
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          this.error = error.response.data?.detail || 'Server returned an error. Please try again.';
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+          this.error = 'No response from server. Please check your connection.';
+        } else {
+          console.error('Error setting up request:', error.message);
+          this.error = 'Failed to send request. Please try again.';
+        }
       } finally {
         this.isLoading = false;
       }

@@ -4,11 +4,29 @@ const API_URL = process.env.VUE_APP_API_URL || 'https://shalmi-db.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   }
 });
+
+// Add logging interceptor
+api.interceptors.request.use(request => {
+  console.log('Starting Request:', request);
+  return request;
+});
+
+api.interceptors.response.use(
+  response => {
+    console.log('Response:', response);
+    return response;
+  },
+  error => {
+    console.log('Response Error:', error);
+    return Promise.reject(error);
+  }
+);
 
 // Add request interceptor to include auth token
 api.interceptors.request.use(
