@@ -496,39 +496,59 @@ export default {
         const token = localStorage.getItem('access_token');
         const formData = new FormData();
         
+        // Basic validation
+        if (!this.productForm.title || !this.productForm.category || !this.productForm.price) {
+          throw new Error('Please fill in all required fields');
+        }
+
+        // Add all form fields to formData
         formData.append('title', this.productForm.title);
         formData.append('category', this.productForm.category);
-        if (this.productForm.subcategory) {
-          formData.append('subcategory', this.productForm.subcategory);
-        }
         formData.append('price', this.productForm.price);
         formData.append('stock', this.productForm.stock);
         formData.append('status', this.productForm.status);
         
-        if (this.productForm.image && this.productForm.image instanceof File) {
+        // Only append subcategory if it exists
+        if (this.productForm.subcategory) {
+          formData.append('subcategory', this.productForm.subcategory);
+        }
+        
+        // Image handling
+        if (this.productForm.image instanceof File) {
+          // Validate image size (e.g., max 5MB)
+          if (this.productForm.image.size > 5 * 1024 * 1024) {
+            throw new Error('Image size should be less than 5MB');
+          }
+          
+          // Validate image type
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+          if (!allowedTypes.includes(this.productForm.image.type)) {
+            throw new Error('Please upload a valid image file (JPEG, PNG, or GIF)');
+          }
+          
           formData.append('image', this.productForm.image);
         }
+
+        // Log formData contents for debugging
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        };
 
         if (this.editingProduct) {
           await api.put(
             `/api/products/${this.editingProduct.id}/`, 
             formData,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              }
-            }
+            config
           );
         } else {
-          await api.post(
-            '/api/products/', 
-            formData,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              }
-            }
-          );
+          await api.post('/api/products/', formData, config);
         }
         
         await this.fetchProducts();
@@ -536,8 +556,21 @@ export default {
         this.resetForm();
       } catch (error) {
         console.error('Error saving product:', error);
-        console.error('Response data:', error.response?.data);
-        alert(error.response?.data?.detail || 'Failed to save product');
+        
+        // Better error handling
+        let errorMessage = 'Failed to save product';
+        if (error.response?.data) {
+          // Handle structured error response
+          const errors = Object.entries(error.response.data)
+            .map(([key, value]) => `${key}: ${value.join(', ')}`)
+            .join('\n');
+          errorMessage = errors || errorMessage;
+        } else if (error.message) {
+          // Handle custom error messages
+          errorMessage = error.message;
+        }
+        
+        alert(errorMessage);
       }
     },
 

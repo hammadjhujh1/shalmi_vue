@@ -76,10 +76,7 @@
                 class="w-full px-3 py-2 border rounded"
                 required
               >
-                <option value="SPB">Single Product Buyer</option>
-                <option value="WSB">Wholesale Buyer</option>
-                <option value="SLR">Seller</option>
-                <option value="BOTH">Both</option>
+                <option value="EU">End User</option>
                 <option value="MGR">Manager</option>
                 <option value="ADM">Admin</option>
               </select>
@@ -129,7 +126,7 @@ export default {
         username: '',
         email: '',
         password: '',
-        role: 'SPB',
+        role: 'EU',
         is_active: true
       }
     }
@@ -219,17 +216,14 @@ export default {
         username: '',
         email: '',
         password: '',
-        role: 'SPB',
+        role: 'EU',
         is_active: true
       };
       this.editingUser = null;
     },
     getRoleName(role) {
       const roles = {
-        'SPB': 'Single Product Buyer',
-        'WSB': 'Wholesale Buyer',
-        'SLR': 'Seller',
-        'BOTH': 'Both',
+        'EU': 'End User',
         'MGR': 'Manager',
         'ADM': 'Admin'
       };
