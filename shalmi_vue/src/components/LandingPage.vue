@@ -13,7 +13,7 @@
             <a href="/blog" class="text-sm hover:underline">Blog</a>
             <a href="/testimonials" class="text-sm hover:underline">Testimonials</a>
             <button 
-              @click="showTokenModal = true" 
+              @click="openTokenGenerator" 
               class="text-sm hover:underline"
             >
               Generate API Token
@@ -80,7 +80,11 @@
         </div>
       </main>
   
-      <TokenGenerator v-model="showTokenModal" />
+      <TokenGenerator 
+        v-if="showTokenModal"
+        v-model="showTokenModal"
+        @close="showTokenModal = false"
+      />
   
       <footer class="bg-primary text-white pt-12 pb-6">
     <!-- Company Description -->
@@ -215,7 +219,11 @@
       },
       goToAdmin() {
         this.$router.push('/admin')
-      }
+      },
+      openTokenGenerator() {
+        console.log('Opening token generator modal');
+        this.showTokenModal = true;
+      },
     }
   }
   </script>
