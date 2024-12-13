@@ -80,6 +80,8 @@
         </div>
       </main>
   
+      <TokenGenerator v-model="showTokenModal" />
+  
       <footer class="bg-primary text-white pt-12 pb-6">
     <!-- Company Description -->
     <div class="container mx-auto px-4 mb-8">

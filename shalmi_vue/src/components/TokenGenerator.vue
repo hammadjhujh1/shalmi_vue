@@ -100,21 +100,32 @@
     methods: {
       async generateToken() {
         try {
+          console.log('Attempting to generate token for user:', this.credentials.username);
           const response = await api.post('/api/token/', this.credentials);
           if (response.data && response.data.access) {
+            console.log('Token generated successfully');
             this.token = response.data.access;
           } else {
+            console.error('Invalid response format:', response.data);
             throw new Error('Invalid response format');
           }
         } catch (error) {
           console.error('Error generating token:', error);
+          console.error('Response data:', error.response?.data);
           alert(error.response?.data?.detail || 'Failed to generate token. Please check your credentials.');
         }
       },
       copyToken() {
         console.log('Copying token to clipboard');
-        navigator.clipboard.writeText(this.tokenFormat);
-        alert('Token copied to clipboard!');
+        navigator.clipboard.writeText(this.tokenFormat)
+          .then(() => {
+            console.log('Token copied successfully');
+            alert('Token copied to clipboard!');
+          })
+          .catch(err => {
+            console.error('Failed to copy token:', err);
+            alert('Failed to copy token to clipboard');
+          });
       },
       closeModal() {
         console.log('Closing modal and resetting state');
