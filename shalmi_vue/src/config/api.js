@@ -2,13 +2,14 @@ import axios from 'axios';
 import router from '@/router';
 
 const api = axios.create({
-  baseURL: 'https://shalmi-db.onrender.com',
+  baseURL: 'http://localhost:8001',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 // Add a request interceptor
+// https://shalmi-db.onrender.com
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
